@@ -105,7 +105,7 @@ https://unicode.org/charts/
 
 You can convert from code point to UTF-8 hex byte sequences and
 visa-versa using an online app:
-https://www.cogsci.ed.ac.uk/~richard/UTF-8.cgi
+https://www.cogsci.ed.ac.uk/~richard/utf-8.cgi
 
 The test cases were inspired by Markus Kuhn and we use many of his test
 cases:

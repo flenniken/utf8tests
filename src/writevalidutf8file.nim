@@ -12,7 +12,7 @@ const
   testNodeJs = false
 
 
-proc writeValidUtf8FileTea*(inFilename: string, outFilename: string,
+proc writeValidUtf8Ref*(inFilename: string, outFilename: string,
     skipOrReplace = "replace"): int =
   ## Read the binary file input file, which contains invalid UTF-8
   ## bytes, then write valid UTF-8 bytes to the output file either

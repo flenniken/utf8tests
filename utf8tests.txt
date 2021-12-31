@@ -1,5 +1,5 @@
 # == UTF-8 Test Cases ==
-# Updated on Fri Dec 31 19:31:58 UTC 2021
+# Updated on Fri Dec 31 21:16:29 UTC 2021
 #
 # The file, utf8test.txt, contains test cases for testing UTF-8
 # decoders and validators.  You "compile" the file to generate
@@ -89,8 +89,10 @@
 # too big, <F7 BF BF BF BF BF BF>
 6.5:invalid hex:F7 BF BF BF BF BF BF:nothing:EFBFBD  EFBFBD  EFBFBD  EFBFBD  EFBFBD  EFBFBD  EFBFBD
 
-# U+00000080, <c2 80>
+# U+0080, <c2 80>
 7.1:valid hex:c2 80
+7.2:valid hex:c2 81
+7.3:valid hex:c2 82
 
 # 2.2  Last possible sequence of a certain length
 
