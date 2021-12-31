@@ -1,7 +1,7 @@
 # == UTF-8 Test Cases ==
-# Updated on Fri Dec 31 21:16:29 UTC 2021
+# Updated on Fri Dec 31 21:55:24 UTC 2021
 #
-# The file, utf8test.txt, contains test cases for testing UTF-8
+# This file, utf8test.txt, contains test cases for testing UTF-8
 # decoders and validators.  You "compile" the file to generate
 # the file utf8test.bin used for testing.
 #
@@ -13,12 +13,12 @@
 # test line starts with a unique string. Tests lines may be added
 # or removed but never changed.
 #
-# The utf8tests.txt file is an ASCII file without control characters.
+# This file is an ASCII file without control characters.
 #
 # * The replacment character is U+FFFD <EFBFBD>.
 # * nothing = ""
 #
-# Line types in the utftests.txt file:
+# Line types in this file:
 #
 # # <comment line>
 # <blank line>
@@ -29,12 +29,10 @@
 # hexString2 is the expected value when skipping invalid bytes.
 # hexString2 is the expected value when replacing invalid bytes with U+FFFD.
 #
-# The utftests.bin is a binary file.
+# The utf8tests.bin is a binary file.
 #
-# Line types in the utftests.bin file:
+# Line types in the utf8tests.bin file:
 #
-# # <comment line>
-# <blank line>
 # num:valid:bytes
 # num:invalid:bytes
 

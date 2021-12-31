@@ -1,7 +1,23 @@
 import std/os
 import std/unittest
+import std/strutils
 import writevalidutf8file
 import checks
+
+proc generateArtifacts(name: string, writeProc: WriteValidUtf8File): int =
+  ## Generate the skip and replace artifacts for the given name.
+
+  var options = ["skip", "replace"]
+  for ix in [0, 1]:
+    let skipOrReplace = options[ix]
+    let filename = "artifacts/utf8.$1.$2.txt" % [skipOrReplace, name]
+    if not fileExists(filename) or fileNewer(binTestCases, filename):
+      echo "generating file: " & filename
+      let rc = writeProc(binTestCases, filename, skipOrReplace)
+      if rc != 0:
+        result = rc
+
+
 
 suite "writevalidutf8file.nim":
 
@@ -26,15 +42,10 @@ suite "writevalidutf8file.nim":
       echo "run the tests again"
       fail()
 
-  test "generate artifacts":
-    let skipFilename = "artifacts/utf8.skip.ref.txt"
-    if not fileExists(skipFilename) or fileNewer(binTestCases, skipFilename):
-        echo "generating file: " & skipFilename
-        let rc = writeValidUtf8Ref(binTestCases, skipFilename, "skip")
-        check rc == 0
+  test "generate reference artifacts":
+    let rc = generateArtifacts("ref", writeValidUtf8Ref)
+    check rc == 0
 
-    let replaceFilename = "artifacts/utf8.replace.ref.txt"
-    if not fileExists(replaceFilename) or fileNewer(binTestCases, replaceFilename):
-        echo "generating file: " & replaceFilename
-        let rc = writeValidUtf8Ref(binTestCases, replaceFilename, "skip")
-        check rc == 0
+  test "generate python3 artifacts":
+    let rc = generateArtifacts("python.3.7.5", writeValidUtf8FilePython3)
+    check rc == 0

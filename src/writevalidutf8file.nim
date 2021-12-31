@@ -157,27 +157,24 @@ when testIconv:
     else:
       result = 0
 
-proc writeValidUtf8FilePython3(inFilename: string, outFilename: string,
-                           skipInvalid: bool): int =
+proc writeValidUtf8FilePython3*(inFilename: string, outFilename: string,
+    skipOrReplace = "replace"): int =
   ## Read the binary file input file, which might contain invalid
   ## UTF-8 bytes, then write valid UTF-8 bytes to the output file
   ## either skipping the invalid bytes or replacing them with U-FFFD.
   ##
   ## When there is an error, display the error message to standard out
-  ## and return 1, else return 0.  The input file must be under 50k.
-
-  if fileExistsAnd50kEcho(inFilename) != 0:
-    return 1
+  ## and return 1, else return 0.
 
   var option: string
-  if skipInvalid:
+  if skipOrReplace == "skip":
     option = "-s"
   else:
     option = ""
 
   # Run a python 3 script on the input file to generate the output
   # file.
-  let cmd = "python3 testfiles/writeValidUtf8.py $1 $2 $3" % [
+  let cmd = "python3 writers/writeValidUtf8.py $1 $2 $3" % [
     option, inFilename, outFilename]
   discard execCmd(cmd)
 

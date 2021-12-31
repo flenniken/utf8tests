@@ -280,7 +280,7 @@ proc compareTablesEcho(eTable: OrderedTable[string, TestLine],
 
 
 type
-  WriteValidUtf8File = proc (inFilename, outFilename: string,
+  WriteValidUtf8File* = proc (inFilename, outFilename: string,
                              skipOrReplace = "replace"): int
 
 proc testWriteValidUtf8File*(testProc: WriteValidUtf8File, option: string = "both"): bool =
@@ -340,5 +340,3 @@ proc testWriteValidUtf8File*(testProc: WriteValidUtf8File, option: string = "bot
       result = false
       echo "WriteValidUtf8File with '$1' failed, see above." % skipOrReplace
       echo "------------------------------------------------------"
-
-
