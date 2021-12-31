@@ -10,8 +10,8 @@ import regexes
 import opresult
 
 const
-  testCases* = "testfiles/utf8tests.txt"
-  binTestCases* = "testfiles/utf8tests.bin"
+  testCases* = "utf8tests.txt"
+  binTestCases* = "utf8tests.bin"
 
   # The replacement character U+FFFD has UTF-8 byte sequence ef bf bd.
   replacementSeq* = "\xEF\xBF\xBD"
@@ -19,14 +19,7 @@ const
   # The tests turned off do not pass.
   testIconv = false
   testNim = true
-  testPython3skip = true
-  testPython3replace = false
   testNodeJs = false
-
-  validStr = "valid:"
-  validHexStr = "valid hex:"
-  invalidStr = "invalid at "
-  invalidHexStr = "invalid hex at "
 
 type
   TestLine* = object
@@ -404,163 +397,6 @@ proc sanitizeUtf8Nim*(str: string, skipOrReplace = "replace"): string =
       result.add("\ufffd")
     ix = endPos + 1
 
-func formatGotLine(gotLine: string): string =
-  ## Show the gotLine comment part followed by hex.
-  ##invalid at 0: 6.0, too big U-001FFFFF, F7 BF BF BF: ????
-  ##6.0, too big U-001FFFFF, (F7 BF BF BF): xx xx xx xx
-
-  # Find the two colons.
-  let firstColon = gotLine.find(':')
-  assert firstColon >= 0
-  let start = firstColon + 2
-  assert start < gotLine.len
-  let secondColon = gotLine[start .. ^1].find(':') + start
-  assert secondColon >= start
-
-  let comment = gotLine[start .. secondColon - 1]
-  let bytesStart = secondColon + 2
-  assert bytesStart <= gotLine.len
-  let hexString = stringToHex(gotLine[bytesStart .. ^1])
-
-  result = fmt"{comment}: {hexString}"
-
-proc compareUtf8TestFiles(expectedFilename: string, gotFilename: string): bool =
-  ## Return true when the two files are the same. When different, show
-  ## the line differences.
-
-  let expectedData = readFile(expectedFilename)
-  let gotData = readFile(gotFilename)
-
-  if expectedData.len != gotData.len:
-    result = false
-  else:
-    result = true
-
-  let expectedLines = splitLines(expectedData)
-  let gotLines = splitLines(gotData)
-
-  # Compare the file generated with the expected output line by line.
-  var ix = 0
-  while true:
-    if ix >= expectedLines.len and ix >= gotLines.len:
-      break
-
-    var expectedLine: string
-    if ix < expectedLines.len:
-      expectedLine = expectedLines[ix]
-    else:
-      expectedLine = ""
-
-    var gotLine: string
-    if ix < gotLines.len:
-      gotLine = gotLines[ix]
-    else:
-      gotLine = ""
-
-    if expectedLine != gotLine:
-      # echo "expected: " & expectedLine
-      # echo "     got: " & gotLine
-      echo formatGotLine(gotLine)
-
-      result = false
-
-    inc(ix)
-
-
-
-# todo: test Utf8CharString
-
-# proc testUtf8CharString(text: string, start: Natural, eStr: string, ePos: Natural): bool =
-#   var pos = start
-#   let gotStr = utf8CharString(text, pos)
-#   result = true
-#   if gotStr != eStr:
-#     echo "expected: " & eStr
-#     echo "     got: " & gotStr
-#     result = false
-#   if pos != ePos:
-#     echo "expected pos: " & $ePos
-#     echo "     got pos: " & $pos
-#     result = false
-
-#   if result == false:
-#     let rune = runeAt(text, start)
-#     echo "rune = " & $rune
-#     echo "rune hex = " & toHex(int32(rune))
-#     echo "utf-8 hex = " & toHex(toUtf8(rune))
-
-# proc testUtf8CharStringError(text: string, start: Natural, ePos: Natural): bool =
-#   var pos = start
-#   let gotStr = utf8CharString(text, pos)
-#   result = true
-#   if gotStr != "":
-#     result = false
-#   if pos != ePos:
-#     result = false
-#   if result == false:
-#     echo "expected empty string"
-#     echo ""
-#     echo "input text: " & text
-#     echo "input text as hex: " & toHex(text)
-#     echo "start pos: " & $start
-#     echo ""
-#     echo "expected pos: " & $ePos
-#     echo "     got pos: " & $pos
-#     echo ""
-#     echo "len: $1, got: '$2'" % [$gotStr.len, gotStr]
-#     echo "got as hex: " & toHex(gotStr)
-
-#     # validate the input text.
-#     var invalidPos = validateUtf8(text)
-#     if invalidPos != -1:
-#       echo "validateUtf8 reports the text is valid."
-#     else:
-#       echo "validateUtf8 reports invalid pos: " & $invalidPos
-
-#     # Run iconv on the character.
-#     let filename = "tempfile.txt"
-#     var file = open(filename, fmWrite)
-#     file.write(text[start .. text.len-1])
-#     file.close()
-#     let rc = execCmd("iconv -f UTF-8 -t UTF-8 $1" % filename)
-#     echo "iconv returns: " & $rc
-#     discard tryRemoveFile(filename)
-
-
-proc testSanitizeutf8Empty(str: string): bool =
-  ## Test that the string does not have any valid UTF-8 bytes.
-
-  result = true
-  let empty = sanitizeUtf8(str, "skip")
-  if empty != "":
-    echo "expected nothing, got: " & empty
-    result = false
-
-  let rchars = sanitizeUtf8(str, "replace")
-  if rchars.len != str.len * 3 or rchars.len mod 3 != 0:
-    echo "expected all replace characters, got: " & rchars
-    result = false
-  else:
-    # check at all the bytes are U-FFFD (EF BF BD)
-    for ix in countUp(0, rchars.len-3, 3):
-      if rchars[ix] != '\xEF' or rchars[ix+1] != '\xBF' or
-         rchars[ix+2] != '\xBD':
-        echo "expected all replace characters, got: " & rchars
-        result = false
-        break
-
-proc testSanitizeutf8(str: string, expected: string, skipOrReplace = "replace"): bool =
-  ## Test that sanitizeUtf8 returns the expected string when skipping.
-
-  result = true
-  let sanitized = sanitizeUtf8(str, skipOrReplace)
-  if sanitized != expected:
-    echo "     got: " & sanitized
-    echo "expected: " & expected
-    result = false
-
-
-
 proc fileExistsAnd50kEcho(filename: string): int =
   ## Return 0 when the file exists and it is less than 50K. Otherwise
   ## echo the problem and return 1.
@@ -797,7 +633,6 @@ proc testWriteValidUtf8File*(testProc: WriteValidUtf8File, option: string = "bot
 
   result = true
   var rc: int
-  var passed: bool
 
   var loop: seq[string]
   if option == "both":
@@ -818,7 +653,7 @@ proc testWriteValidUtf8File*(testProc: WriteValidUtf8File, option: string = "bot
 
     # Read the file just generated into a table.
     let gotTableOr = readTestCasesFile(gotFile)
-    # discard tryRemoveFile(gotFile)
+    discard tryRemoveFile(gotFile)
     if gotTableOr.isMessage:
       echo "Unable to read the generated file."
       echo gotTableOr.message
