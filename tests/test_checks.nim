@@ -1,9 +1,6 @@
 import std/unittest
-# import std/strutils
 import std/os
 import std/strformat
-# import std/unicode
-# import std/osproc
 import opresult
 import checks
 
@@ -129,7 +126,7 @@ suite "checks.nim":
     check testParseValidLine("1.2.0:valid:κόσμε", newTestLine(true, "1.2.0", "κόσμε"))
     check testParseValidLine("2.0.0:valid:©", newTestLine(true, "2.0.0", "©"))
     check testParseValidLine("1.0.0:valid:1", newTestLine(true, "1.0.0", "1"))
-      
+
   test "parseValidHexLine":
     check testParseValidHexLine("2.1.0: valid hex: C2 A9", newTestLine(true, "2.1.0", "©"))
     check testParseValidHexLine("3.0: valid hex: E2 80 90", newTestLine(true, "3.0",
@@ -217,3 +214,18 @@ suite "checks.nim":
 
     discard tryRemoveFile(filename)
 
+  test "check utf8tests.txt is ascii":
+
+    var found = false
+    var lineNum = 1
+    for line in lines(testCases):
+      for ch in line:
+        if ord(ch) < 20:
+          echo fmt"{lineNum} has a control character in it."
+          found = true
+        elif ord(ch) > 127:
+          echo fmt"{lineNum} has a character > 127."
+          found = true
+      inc(lineNum)
+
+    check found == false
