@@ -23,32 +23,7 @@
 #
 # The replacment character is U+FFFD <EFBFBD>.
 #
-# Shorthand symbols:
-#
-# rep = EFBFBD
-# rep2 = EFBFBD  EFBFBD
-# rep3 = EFBFBD  EFBFBD  EFBFBD
-# repx = ...
 # nothing = ""
-#
-# For the invalid test cases you specify the test case and the
-# expected output when skipping invalid bytes and the expected
-# output when replacing invalid bytes. The comment lines before
-# the test line tell what you are testing.
-#
-# Examples:
-#
-# Too big U+001FFFFF, <F7 BF BF BF>
-# 6.0: invalid: F7 BF BF BF : nothing : rep4
-#
-# When the output does not match the expected values you will see
-# messages similar to this:
-#
-# 6.0: invalid: F7 BF BF BF
-# 6.0:   skip expected: nothing
-# 6.0:   skip      got: F7 BF BF BF
-# 6.0:   replace expected: EFBFBD  EFBFBD  EFBFBD  EFBFBD
-# 6.0:   replace      got: F7 BF BF BF
 #
 # Line types:
 #
@@ -225,45 +200,45 @@
 
 # <80 bf>
 
-11.2: invalid hex: 80 bf : nothing : rep2
+11.2: invalid hex: 80 bf : nothing : EFBFBD EFBFBD
 
 # <80 bf 80>
-11.3: invalid hex: 80 bf 80: nothing: rep3
+11.3: invalid hex: 80 bf 80: nothing: EFBFBD EFBFBD EFBFBD
 
 # <80 bf 80 bf>
-11.4: invalid hex: 80 bf 80 bf: nothing: rep4
+11.4: invalid hex: 80 bf 80 bf: nothing: EFBFBD EFBFBD EFBFBD EFBFBD
 
 # <80 bf 80 bf 80>
-11.5: invalid hex: 80 bf 80 bf 80: nothing: rep5
+11.5: invalid hex: 80 bf 80 bf 80: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # <80 bf 80 bf 80 bf>
-11.6: invalid hex: 80 bf 80 bf 80 bf: nothing: rep6
+11.6: invalid hex: 80 bf 80 bf 80 bf: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # 3.1.9  Sequence of all 64 possible continuation bytes (0x80-0xbf)
 
 # <80 - 87>
-12.0: invalid hex: 8081 8283 8485 8687: nothing: rep8
+12.0: invalid hex: 8081 8283 8485 8687: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # <88 - 8f>
-12.1: invalid hex: 8889 8a8b 8c8d 8e8f: nothing: rep8
+12.1: invalid hex: 8889 8a8b 8c8d 8e8f: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # <90 - 97>
-12.2: invalid hex: 9091 9293 9495 9697: nothing: rep8
+12.2: invalid hex: 9091 9293 9495 9697: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # <98 - 9f>
-12.3: invalid hex: 9899 9a9b 9c9d 9e9f: nothing: rep8
+12.3: invalid hex: 9899 9a9b 9c9d 9e9f: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # <a0 - a7>
-12.4: invalid hex: a0a1 a2a3 a4a5 a6a7: nothing: rep8
+12.4: invalid hex: a0a1 a2a3 a4a5 a6a7: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # <a8 - af>
-12.5: invalid hex: a8a9 aaab acad aeaf: nothing: rep8
+12.5: invalid hex: a8a9 aaab acad aeaf: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # <b0 - b7>
-12.6: invalid hex: b0b1 b2b3 b4b5 b6b7: nothing: rep8
+12.6: invalid hex: b0b1 b2b3 b4b5 b6b7: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # <b8 - bf>
-12.7: invalid hex: b8b9 babb bcbd bebf: nothing: rep8
+12.7: invalid hex: b8b9 babb bcbd bebf: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # 3.2  Lonely start characters
 
@@ -362,19 +337,19 @@
 # 3.3.5  6-byte sequence with last byte missing (U+0000):
 
 # <c0>
-18.0: invalid hex: c0: nothing: rep
+18.0: invalid hex: c0: nothing: EFBFBD
 
 # <e0 80>
-18.1: invalid hex: e0 80: nothing: rep2
+18.1: invalid hex: e0 80: nothing: EFBFBD EFBFBD
 
 # <f0 80 80>
-18.2: invalid hex: f0 80 80: nothing: rep3
+18.2: invalid hex: f0 80 80: nothing: EFBFBD EFBFBD EFBFBD
 
 # <f8 80 80 80>
-18.3: invalid hex: f8 80 80 80: nothing: rep4
+18.3: invalid hex: f8 80 80 80: nothing: EFBFBD EFBFBD EFBFBD EFBFBD
 
 # <fc 80 80 80 80>
-18.4: invalid hex: fc 80 80 80 80: nothing: rep5
+18.4: invalid hex: fc 80 80 80 80: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 
 # 3.3.6  2-byte sequence with last byte missing (U+000007FF):
@@ -384,19 +359,19 @@
 # 3.3.10 6-byte sequence with last byte missing (U+7FFFFFFF):
 
 # U+000007FF, <df>
-19.0: invalid hex: df: nothing: rep
+19.0: invalid hex: df: nothing: EFBFBD
 
 # U+0000FFFF, <ef bf>
-19.1: invalid hex: ef bf: nothing: rep2
+19.1: invalid hex: ef bf: nothing: EFBFBD EFBFBD
 
 # U+001FFFFF, <f7 bf bf>
-19.2: invalid hex: f7 bf bf: nothing: rep3
+19.2: invalid hex: f7 bf bf: nothing: EFBFBD EFBFBD EFBFBD
 
 # U+03FFFFFF, <fb bf bf bf>
-19.3: invalid hex: fb bf bf bf: nothing: rep4
+19.3: invalid hex: fb bf bf bf: nothing: EFBFBD EFBFBD EFBFBD EFBFBD
 
 # U+7FFFFFFF, <fd bf bf bf bf>
-19.4: invalid hex: fd bf bf bf bf: nothing: rep5
+19.4: invalid hex: fd bf bf bf bf: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # 123 <ef 80>
 19.5: invalid hex: 31 32 33 ef 80: 31 32 33: 31 32 33 EFBFBD EFBFBD
@@ -411,16 +386,16 @@
 # Byte fe and ff cannot appear in UTF-8.
 
 # <80>
-21.0: invalid hex: 80: nothing: rep
+21.0: invalid hex: 80: nothing: EFBFBD
 
 # <81>
-21.1: invalid hex: 81: nothing: rep
+21.1: invalid hex: 81: nothing: EFBFBD
 
 # <fe>
-21.2: invalid hex: fe: nothing: rep
+21.2: invalid hex: fe: nothing: EFBFBD
 
 # <ff>
-21.3: invalid hex: ff: nothing: rep
+21.3: invalid hex: ff: nothing: EFBFBD
 
 # 7 <ff>
 21.4: invalid hex: 37 ff: 37: 37 EFBFBD
@@ -443,19 +418,19 @@
 22.1: valid hex: 2F
 
 # overlong solidus <c0 af>
-22.2: invalid hex: c0 af: nothing: rep2
+22.2: invalid hex: c0 af: nothing: EFBFBD EFBFBD
 
 # overlong solidus <e0 80 af>
-22.3: invalid hex: e0 80 af: nothing: rep3
+22.3: invalid hex: e0 80 af: nothing: EFBFBD EFBFBD EFBFBD
 
 # overlong solidus <f0 80 80 af>
-22.4: invalid hex: f0 80 80 af: nothing: rep4
+22.4: invalid hex: f0 80 80 af: nothing: EFBFBD EFBFBD EFBFBD EFBFBD
 
 # overlong solidus <f8 80 80 80 af>
-22.5: invalid hex: f8 80 80 80 af: nothing: rep5
+22.5: invalid hex: f8 80 80 80 af: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # overlong solidus <fc 80 80 80 80 af>
-22.6: invalid hex: fc 80 80 80 80 af: nothing: rep6
+22.6: invalid hex: fc 80 80 80 80 af: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # U+0800, <e0 a0 80>
 22.7: valid hex: e0 a0 80
@@ -463,21 +438,21 @@
 # # 4.2  Maximum overlong sequences
 
 # overlong U+0000007F <c1 bf>
-23.0: invalid hex: c1 bf: nothing: rep2
+23.0: invalid hex: c1 bf: nothing: EFBFBD EFBFBD
 
 # overlong U+000007FF <e0 9f bf>
-23.1: invalid hex: e0 9f bf: nothing: rep3
+23.1: invalid hex: e0 9f bf: nothing: EFBFBD EFBFBD EFBFBD
 
 # overlong U+0000FFFF <f0 8f bf bf>
-23.2: invalid hex: f0 8f bf bf: nothing: rep4
+23.2: invalid hex: f0 8f bf bf: nothing: EFBFBD EFBFBD EFBFBD EFBFBD
 
 # overlong U+001FFFFF <f8 87 bf bf bf>
-23.3: invalid hex: f8 87 bf bf bf: nothing: rep5
+23.3: invalid hex: f8 87 bf bf bf: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # # 5.1 Single UTF-16 surrogates
 
 # 1 surrogate U+D800, <ed a0 80>
-24.0: invalid hex: ed a0 80: nothing: rep3
+24.0: invalid hex: ed a0 80: nothing: EFBFBD EFBFBD EFBFBD
 
 # 1 surrogate U+D800, <ed a0 80> 5
 24.0.1: invalid hex: ed a0 80 35: 35: EFBFBD EFBFBD EFBFBD 35
@@ -486,48 +461,48 @@
 24.0.2: invalid hex: 31 32 33 ed a0 80 31: 31 32 33 31: 31 32 33 EFBFBD EFBFBD EFBFBD 31
 
 # 1 surrogate U+DB7F, <ed ad bf>
-24.2: invalid hex: ed ad bf: nothing: rep3
+24.2: invalid hex: ed ad bf: nothing: EFBFBD EFBFBD EFBFBD
 
 # 1 surrogate U+DB80, <ed ae 80>
-24.3: invalid hex: ed ae 80: nothing: rep3
+24.3: invalid hex: ed ae 80: nothing: EFBFBD EFBFBD EFBFBD
 
 # 1 surrogate U+DBFF, <ed af bf>
-24.4: invalid hex: ed af bf: nothing: rep3
+24.4: invalid hex: ed af bf: nothing: EFBFBD EFBFBD EFBFBD
 
 # 1 surrogate U+DC00, <ed b0 80>
-24.5: invalid hex: ed b0 80: nothing: rep3
+24.5: invalid hex: ed b0 80: nothing: EFBFBD EFBFBD EFBFBD
 
 # 1 surrogate U+DF80, <ed be 80>
-24.6: invalid hex: ed be 80: nothing: rep3
+24.6: invalid hex: ed be 80: nothing: EFBFBD EFBFBD EFBFBD
 
 # 1 surrogate U+DFFF, <ed bf bf>
-24.7: invalid hex: ed bf bf: nothing: rep3
+24.7: invalid hex: ed bf bf: nothing: EFBFBD EFBFBD EFBFBD
 
 # 5.2 Paired UTF-16 surrogates
 
 # 2 surrogates U+D800 U+DC00, <eda080 edb080>
-25.0: invalid hex: ed a0 80 ed b0 80: nothing: rep6
+25.0: invalid hex: ed a0 80 ed b0 80: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # 2 surrogates U+D800 U+DFFF, <eda080 edbfbf>
-25.1: invalid hex: ed a0 80 ed bf bf: nothing: rep6
+25.1: invalid hex: ed a0 80 ed bf bf: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # 2 surrogates U+DB7F U+DC00, <edadbf edb080>
-25.2: invalid hex: ed ad bf ed b0 80: nothing: rep6
+25.2: invalid hex: ed ad bf ed b0 80: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # 2 surrogates U+DB7F U+DFFF, <edadbf edbfbf>
-25.3: invalid hex: ed ad bf ed bf bf: nothing: rep6
+25.3: invalid hex: ed ad bf ed bf bf: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # 2 surrogates U+DB80 U+DC00, <edae80 edb080>
-25.4: invalid hex: ed ae 80 ed b0 80: nothing: rep6
+25.4: invalid hex: ed ae 80 ed b0 80: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # 2 surrogates U+DB80 U+DFFF, <edae80 edbfbf>
-25.5: invalid hex: ed ae 80 ed bf bf: nothing: rep6
+25.5: invalid hex: ed ae 80 ed bf bf: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # 2 surrogates U+DBFF U+DC00, <edafbf edb080>
-25.6: invalid hex: ed af bf ed b0 80: nothing: rep6
+25.6: invalid hex: ed af bf ed b0 80: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # 2 surrogates U+DBFF U+DFFF, <edafbf edbfbf>
-25.7: invalid hex: ed af bf ed bf bf: nothing: rep6
+25.7: invalid hex: ed af bf ed bf bf: nothing: EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 # # 5.3 Valid noncharacter code positions
 
@@ -690,7 +665,7 @@
 # !(00-7f, c2-df, e0, e1-ec, ed, ee-ef, f0, f1-f3, f4)
 
 # <80>
-29.0: invalid hex: 80: nothing: rep
+29.0: invalid hex: 80: nothing: EFBFBD
 
 # <20 80>
 29.1: invalid hex: 20 80: 20 : 20 EFBFBD
@@ -731,10 +706,10 @@
 30.1: invalid hex: c2 7f: 7f: EFBFBD 7f
 
 # <c2 c0>
-30.2: invalid hex: c2 c0: nothing: rep2
+30.2: invalid hex: c2 c0: nothing: EFBFBD EFBFBD
 
 # <c2 ff>
-30.3: invalid hex: c2 ff: nothing: rep2
+30.3: invalid hex: c2 ff: nothing: EFBFBD EFBFBD
 
 # <df 00>
 30.4: invalid hex: df 00: 00: EFBFBD 00
@@ -743,10 +718,10 @@
 30.5: invalid hex: df 7f: 7f: EFBFBD 7f
 
 # <df c0>
-30.6: invalid hex: df c0: nothing: rep2
+30.6: invalid hex: df c0: nothing: EFBFBD EFBFBD
 
 # <df ff>
-30.7: invalid hex: df ff: nothing: rep2
+30.7: invalid hex: df ff: nothing: EFBFBD EFBFBD
 
 
 # state 0 -> 4 -> 2 -> 1
@@ -757,10 +732,10 @@
 31.1: invalid hex: e0 80 7f: 7f: EFBFBD  EFBFBD  7f
 
 # <e0 a0 c0>
-31.2: invalid hex: e0 80 c0: nothing: rep3
+31.2: invalid hex: e0 80 c0: nothing: EFBFBD EFBFBD EFBFBD
 
 # <e0 a0 ff>
-31.3: invalid hex: e0 80 ff: nothing: rep3
+31.3: invalid hex: e0 80 ff: nothing: EFBFBD EFBFBD EFBFBD
 
 # state 0 -> 5 -> 2 -> 1
 # <ed 80 00>
@@ -770,10 +745,10 @@
 32.1: invalid hex: ed 80 7f: 7f: EFBFBD  EFBFBD 7f
 
 # <ed 80 c0>
-32.2: invalid hex: ed 80 c0: nothing: rep3
+32.2: invalid hex: ed 80 c0: nothing: EFBFBD EFBFBD EFBFBD
 
 # <ed 80 ff>
-32.3: invalid hex: ed 80 ff: nothing: rep3
+32.3: invalid hex: ed 80 ff: nothing: EFBFBD EFBFBD EFBFBD
 
 
 # state 0 -> 6 -> 3 -> 2 -> 1
@@ -784,10 +759,10 @@
 33.1: invalid hex: f0 90 80 7f: 7f: EFBFBD  EFBFBD  EFBFBD 7f
 
 # <f0 90 80 c0>
-33.2: invalid hex: f0 90 80 c0: nothing: rep4
+33.2: invalid hex: f0 90 80 c0: nothing: EFBFBD EFBFBD EFBFBD EFBFBD
 
 # <f0 90 80 ff>
-33.3: invalid hex: f0 90 80 ff: nothing: rep4
+33.3: invalid hex: f0 90 80 ff: nothing: EFBFBD EFBFBD EFBFBD EFBFBD
 
 
 # state 0 -> 7 -> 3 -> 2 -> 1
@@ -798,10 +773,10 @@
 34.1: invalid hex: f1 80 80 7f: 7f: EFBFBD  EFBFBD  EFBFBD  7f
 
 # <f1 80 80 c0>
-34.2: invalid hex: f1 80 80 c0: nothing: rep4
+34.2: invalid hex: f1 80 80 c0: nothing: EFBFBD EFBFBD EFBFBD EFBFBD
 
 # <f1 80 80 ff>
-34.3: invalid hex: f1 80 80 ff: nothing: rep4
+34.3: invalid hex: f1 80 80 ff: nothing: EFBFBD EFBFBD EFBFBD EFBFBD
 
 
 # state 0 -> 8 -> 3 -> 2 -> 1
@@ -812,10 +787,10 @@
 35.1: invalid hex: f4 80 80 7f: 7f: EFBFBD  EFBFBD  EFBFBD 7f
 
 # <f4 80 80 c0>
-35.2: invalid hex: f4 80 80 c0: nothing: rep4
+35.2: invalid hex: f4 80 80 c0: nothing: EFBFBD EFBFBD EFBFBD EFBFBD
 
 # <f4 80 80 ff>
-35.3: invalid hex: f4 80 80 ff: nothing: rep4
+35.3: invalid hex: f4 80 80 ff: nothing: EFBFBD EFBFBD EFBFBD EFBFBD
 
 
 # null <00>
@@ -826,17 +801,17 @@
 # 110xxxxx 10xxxxxx
 # 11000000 10000000
 # overlong zero <c0 80>
-37.0: invalid hex: c0 80: nothing: rep2
+37.0: invalid hex: c0 80: nothing: EFBFBD EFBFBD
 
 # 1110xxxx 10xxxxxx 10xxxxxx =
 # 11100000 10000000 10000000 =
 # overlong zero <E0 80 80>
-37.1: invalid hex: E0 80 80: nothing: rep3
+37.1: invalid hex: E0 80 80: nothing: EFBFBD EFBFBD EFBFBD
 
 # 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
 # 11110000 10000000 10000000 10000000
 # overlong zero <F0 80 80 80>
-37.2: invalid hex: F0 80 80 80: nothing: rep4
+37.2: invalid hex: F0 80 80 80: nothing: EFBFBD EFBFBD EFBFBD EFBFBD
 
 # 0 in the middle, 20 00 35
 37.2.1: valid hex : 20 00 35

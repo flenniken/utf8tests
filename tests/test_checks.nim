@@ -7,6 +7,30 @@ import std/strformat
 import opresult
 import checks
 
+proc compareTestLineEcho*(testLine: TestLine, eTestLine: TestLine): bool =
+  ## Compare to TestLine objects and show the differences. Return true
+  ## when equal.
+  result = true
+  if testLine.numStr != eTestLine.numStr:
+    echo "numStr expected: " & eTestLine.numStr
+    echo "            got: " & testLine.numStr
+    result = false
+
+  if testLine.testCase != eTestLine.testCase:
+    echo "testCase expected: " & eTestLine.testCase
+    echo "              got: " & testLine.testCase
+    result = false
+
+  if testLine.eSkip != eTestLine.eSkip:
+    echo "eSkip expected: " & eTestLine.eSkip
+    echo "           got: " & testLine.eSkip
+    result = false
+
+  if testLine.eReplace != eTestLine.eReplace:
+    echo "eReplace expected: " & eTestLine.eReplace
+    echo "              got: " & testLine.eReplace
+    result = false
+
 proc testHexToString(hexString: string, eStr: string): bool =
   ## Test hexToString, pass a hex string and the expected resulting
   ## string.
@@ -72,7 +96,6 @@ proc testParseTestLineError(line: string): bool =
     echo $testLineOr.value
     result = false
 
-
 suite "checks.nim":
 
   test "stringToHex":
@@ -120,28 +143,28 @@ suite "checks.nim":
       newTestLine(false, "6.0", "\xF7\xBF\xBF\xBF", "",
                   "\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD"))
 
-    check testParseInvalidHexLine("3: invalid hex: ff: nothing: rep",
-      newTestLine(false, "3", "\xff", "", replacementSeq))
+    check testParseInvalidHexLine("3: invalid hex: ff: nothing: EFBFBD",
+      newTestLine(false, "3", "\xff", "", "\xEF\xBF\xBD"))
 
-    check testParseInvalidHexLine("3: invalid hex: ff: nothing: rep ",
-      newTestLine(false, "3", "\xff", "", replacementSeq))
+    check testParseInvalidHexLine("3: invalid hex: ff: nothing: EFBFBD ",
+      newTestLine(false, "3", "\xff", "", "\xEF\xBF\xBD"))
 
-    check testParseInvalidHexLine("3: invalid hex: ff: nothing: rep2",
-      newTestLine(false, "3", "\xff", "", replacementSeq & replacementSeq))
+    check testParseInvalidHexLine("3: invalid hex: ff: nothing: EFBFBD EFBFBD",
+      newTestLine(false, "3", "\xff", "", "\xEF\xBF\xBD\xEF\xBF\xBD"))
 
-    check testParseInvalidHexLine("3: invalid hex: ff: nothing: rep2 ",
-      newTestLine(false, "3", "\xff", "", replacementSeq & replacementSeq))
+    check testParseInvalidHexLine("3: invalid hex: ff: nothing: EFBFBD EFBFBD ",
+      newTestLine(false, "3", "\xff", "", "\xEF\xBF\xBD\xEF\xBF\xBD"))
 
     check testParseInvalidHexLine("4: invalid hex : ff : 33: 31 32 ",
       newTestLine(false, "4", "\xff", "3", "12"))
 
-    check testParseInvalidHexLine("11.2: invalid hex: 80 bf : nothing : rep2",
-      newTestLine(false, "11.2", "\x80\xbf", "", replacementSeq & replacementSeq))
+    check testParseInvalidHexLine("11.2: invalid hex: 80 bf : nothing : EFBFBD EFBFBD",
+      newTestLine(false, "11.2", "\x80\xbf", "", "\xEF\xBF\xBD\xEF\xBF\xBD"))
 
     line = "6.1: invalid hex: f8 88 80 80 80: nothing: EF BF BD  EF BF BD  EF BF BD  EF BF BD  EF BF BD"
     check testParseInvalidHexLine(line,
       newTestLine(false, "6.1", "\xf8\x88\x80\x80\x80", "",
-        replacementSeq & replacementSeq & replacementSeq & replacementSeq & replacementSeq))
+        "\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD"))
 
   test "parseInvalidLine":
     check testParseInvalidLine("1:invalid:abc", newTestLine(false, "1", "abc"))
@@ -151,8 +174,8 @@ suite "checks.nim":
   test "parseTestLine":
     check testParseTestLine("1:valid:abc", newTestLine(true, "1", "abc"))
     check testParseTestLine("2: valid hex: 39", newTestLine(true, "2", "9"))
-    check testParseTestLine("3: invalid hex: ff: nothing: rep ",
-      newTestLine(false, "3", "\xff", "", replacementSeq))
+    check testParseTestLine("3: invalid hex: ff: nothing: EFBFBD ",
+      newTestLine(false, "3", "\xff", "", "\xEF\xBF\xBD"))
 
   test "parseTestLine error":
     check testParseTestLineError("b:valid:abc")
@@ -181,66 +204,6 @@ suite "checks.nim":
     check fileExists(filename)
     discard tryRemoveFile(filename)
 
-  # test "testValidateUtf8String":
-  #   proc callback(str: string): int =
-  #     result = validateUtf8String(str)
-  #   check testValidateUtf8String(callback)
-
-
-  # test "WriteValidUtf8FileTea":
-  #   check testWriteValidUtf8File(writeValidUtf8FileTea)
-
-  test "sanitizeUtf8Nim":
-    check sanitizeUtf8Nim("abc") == "abc"
-    check sanitizeUtf8Nim("abc", "skip") == "abc"
-    check sanitizeUtf8Nim("abc", "replace") == "abc"
-    check sanitizeUtf8Nim("ab\xffc", "skip") == "abc"
-    check sanitizeUtf8Nim("\xffabc", "skip") == "abc"
-    check sanitizeUtf8Nim("abc\xff", "skip") == "abc"
-    check sanitizeUtf8Nim("\xff", "skip") == ""
-    check sanitizeUtf8Nim("\xff\xff\xff", "skip") == ""
-    check sanitizeUtf8Nim("a\xff\xffb", "skip") == "ab"
-    check sanitizeUtf8Nim("", "skip") == ""
-    check sanitizeUtf8Nim("", "replace") == ""
-
-  # test "hexString":
-  #   check hexString("") == ""
-  #   check hexString("1") == "31"
-  #   check hexString("12") == "31 32"
-  #   check hexString("\x00\x12\x34\xff") == "00 12 34 ff"
-
-  # test "formatGotLine":
-  #   let str = "invalid at 0: 6.0, too big U-001FFFFF, <F7 BF BF BF>: "
-  #   let expected = "6.0, too big U-001FFFFF, <F7 BF BF BF>: "
-  #   check formatGotLine(str) == expected
-
-  # when testIconv:
-  #   test "writeValidUtf8FileIconv":
-  #     check testWriteValidUtf8File(writeValidUtf8FileIconv, "both")
-
-  # when testPython3skip:
-  #   test "writeValidUtf8FilePython3":
-  #     check testWriteValidUtf8File(writeValidUtf8FilePython3, "skip")
-
-  # # todo: research how python3 replaces invalid when there are muliple bytes.
-  # # 33.2, <f0 90 80 c0>: ef bf bd ef bf bd
-  # when testPython3replace:
-  #   test "writeValidUtf8FilePython3":
-  #     check testWriteValidUtf8File(writeValidUtf8FilePython3, "replace")
-
-  # when testNodeJs:
-  #   test "writeValidUtf8FileNodeJs":
-  #     check testWriteValidUtf8File(writeValidUtf8FileNodeJs, "both")
-
-  # test "generateExpectedFiles":
-  #   # Generate the bin file when the txt file is newer or the bin file
-  #   # is missing.
-  #   if not fileExists(binTestCases) or fileNewer(testCases, binTestCases):
-  #       echo "generating file: " & binTestCases
-  #       check generateExpectedFiles()
-  #       echo "run the tests again"
-  #       fail()
-
   test "read tests":
     let tableOr = readTestCasesFile(testCases)
     check tableOr.isValue
@@ -254,5 +217,3 @@ suite "checks.nim":
 
     discard tryRemoveFile(filename)
 
-  test "WriteValidUtf8FileTea":
-    check testWriteValidUtf8File(writeValidUtf8FileTea)

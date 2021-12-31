@@ -62,8 +62,7 @@ task test, "\tRun one or more tests; specify part of test filename.":
   let test_filenames = get_test_filenames()
   for filename in test_filenames:
     if name.toLower in filename.toLower:
-      if filename == "testall.nim":
-        continue
+      echo ""
       let cmd = get_test_module_cmd(filename)
       echo cmd
       exec cmd

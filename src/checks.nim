@@ -2,24 +2,13 @@ import std/options
 import std/strutils
 import std/os
 import std/strformat
-import std/unicode
 import std/tables
-import std/osproc
-import unicodes
 import regexes
 import opresult
 
 const
   testCases* = "utf8tests.txt"
   binTestCases* = "utf8tests.bin"
-
-  # The replacement character U+FFFD has UTF-8 byte sequence ef bf bd.
-  replacementSeq* = "\xEF\xBF\xBD"
-
-  # The tests turned off do not pass.
-  testIconv = false
-  testNim = true
-  testNodeJs = false
 
 type
   TestLine* = object
@@ -108,24 +97,10 @@ func parseInvalidHexLine*(line: string): OpResult[TestLine, string] =
       return newOpResultMsg[TestLine, string](eSkipOr.message)
     eSkip = eSkipOr.value
 
-  var eReplace: string
-  if eReplaceHex.startsWith("rep"):
-    var repeatNum: int
-    if eReplaceHex.len == 3:
-      repeatNum = 1
-    else:
-      try:
-        repeatNum = int(parseBiggestInt(eReplaceHex[3 .. ^1]))
-      except:
-        return newOpResultMsg[TestLine, string](fmt"Invalid rep number: '{eReplaceHex}'")
-    eReplace = ""
-    for _ in countUp(1, repeatNum):
-      eReplace.add(replacementSeq)
-  else:
-    let eReplaceOr = hexToString(eReplaceHex)
-    if eReplaceOr.isMessage:
-      return newOpResultMsg[TestLine, string](eReplaceOr.message)
-    eReplace = eReplaceOr.value
+  let eReplaceOr = hexToString(eReplaceHex)
+  if eReplaceOr.isMessage:
+    return newOpResultMsg[TestLine, string](eReplaceOr.message)
+  let eReplace = eReplaceOr.value
 
   return newOpResult[TestLine, string](newTestLine(false, numStr, testCase, eSkip, eReplace))
 
@@ -239,6 +214,7 @@ proc createUtf8testsBinFile*(resultFilename: string): string =
   ## file has two types of lines, valid lines and invalid lines.  If
   ## there is an error, return a message telling what went wrong.
   ##
+  ## Lines:
   ## numStr:valid:testCase
   ## numStr:invalid:testCase
 
@@ -261,309 +237,6 @@ proc createUtf8testsBinFile*(resultFilename: string): string =
     else:
       lineType = "invalid"
     resultFile.write(fmt"{testLine.numStr}:{lineType}:{testLine.testCase}"&"\n")
-
-
-# proc testValidateUtf8String(callback: proc(str: string): int ): bool =
-#   ## Validate the validateUtf8String method by processing all the the
-#   ## test cases in utf8tests.txt one by one.  The callback procedure
-#   ## is called for each test case. The callback returns -1 when the
-#   ## string is valid, else it is the position of the first invalid
-#   ## byte.
-
-#   if not fileExists(binTestCases):
-#     echo "Missing test file: " & binTestCases
-#     return false
-
-#   # The utf8test.bin is created from the utftest.txt file by
-#   # rewriteUtf8TestFile.
-#   let filename = binTestCases
-#   if not fileExists(filename):
-#     echo "The file does not exist: " & filename
-#     return false
-
-#   var file: File
-#   if not open(file, filename, fmRead):
-#     echo "Unable to open the file: $1" % [filename]
-#     return false
-#   defer:
-#     file.close()
-
-#   var beValid: bool
-#   var lineNum = 0
-#   result = true
-
-#   var hexLineO: Option[TestLine]
-#   for line in lines(file):
-#     inc(lineNum)
-#     if line.len == 0:
-#       continue
-#     elif line.startswith("#"):
-#       continue
-#     elif line.startswith(validStr):
-#       beValid = true
-#       hexLineO = parseValidLine(line)
-#       if not hexLineO.isSome:
-#         echo "Line $1: $2" % [$lineNum, "incorrect line format."]
-#         result = false
-#     elif line.startswith(invalidStr):
-#       beValid = false
-#       hexLineO = parseInvalidLine(line)
-#       if not hexLineO.isSome:
-#         echo "Line $1: $2" % [$lineNum, "incorrect line format."]
-#         result = false
-#     else:
-#       echo "Line $1: not one of the expected lines types." % $lineNum
-#       result = false
-
-#     let hexLine = hexLineO.get()
-
-#     let pos = callback(hexLine.str)
-
-#     if beValid:
-#       if pos != -1:
-#         echo "Line $1 is invalid but expected to be valid. $2" % [$lineNum, hexLine.comment]
-#         result = false
-#     else:
-#       if pos == -1:
-#         echo fmt"Line {lineNum}: Invalid string passed validation. {hexline.comment}"
-#         result = false
-#       elif pos != hexLine.pos:
-#         echo "Line $1: expected invalid pos: $2 $3" % [$lineNum, $hexLine.pos, $hexLine.comment]
-#         echo "Line $1:      got invalid pos: $2" % [$lineNum, $pos]
-#         result = false
-
-
-proc writeValidUtf8FileTea*(inFilename: string, outFilename: string,
-    skipOrReplace = "replace"): int =
-  ## Read the binary file input file, which contains invalid UTF-8
-  ## bytes, then write valid UTF-8 bytes to the output file either
-  ## skipping the invalid bytes or replacing them with U-FFFD.
-  ##
-  ## When there is an error, display the error message to standard out
-  ## and return 1, else return 0.  The input file must be under 50k.
-
-  if not fileExists(inFilename):
-    echo "The input file is missing."
-    return 1
-  if getFileSize(inFilename) > 50 * 1024:
-    echo "The input file must be under 50k."
-    return 1
-
-  # Read the file into memory.
-  var inData: string
-  try:
-    inData = readFile(inFilename)
-  except:
-    echo "Unable to open and read the input file."
-    return 1
-
-  # Process the input data assuming it is UTF-8 encoded but it contains
-  # some invalid bytes. Return valid UTF-8 encoded bytes.
-  let outData = sanitizeUtf8(inData, skipOrReplace)
-
-  # Write the valid UTF-8 data to the output file.
-  try:
-    writeFile(outFilename, outData)
-  except:
-    echo "Unable to open and write the output file."
-    return 1
-
-  result = 0 # success
-
-
-proc sanitizeUtf8Nim*(str: string, skipOrReplace = "replace"): string =
-  ## Sanitize and return the UTF-8 string. The skipOrReplace parameter
-  ## determines whether to skip or replace invalid bytes.  When
-  ## replacing the U-FFFD character is used.
-
-  # Reserve space for the result string the same size as the input string.
-  result = newStringOfCap(str.len)
-
-  let skipInvalid = if skipOrReplace == "skip": true else: false
-
-  var ix = 0
-  while true:
-    if ix >= str.len:
-      break
-    var pos = validateUtf8(str[ix .. str.len - 1])
-    if pos == -1:
-      result.add(str[ix .. str.len - 1])
-      break
-    assert pos >= 0
-    var endPos = ix + pos
-    if endPos > 0:
-      result.add(str[ix .. endPos - 1])
-    if not skipInvalid:
-      result.add("\ufffd")
-    ix = endPos + 1
-
-proc fileExistsAnd50kEcho(filename: string): int =
-  ## Return 0 when the file exists and it is less than 50K. Otherwise
-  ## echo the problem and return 1.
-
-  if not fileExists(filename):
-    echo "The input file is missing."
-    return 1
-  if getFileSize(filename) > 50 * 1024:
-    echo "The input file must be under 50k."
-    return 1
-  result = 0
-
-when testNim:
-  proc writeValidUtf8FileNim(inFilename: string, outFilename: string,
-                             skipOrReplace = "replace"): int =
-    ## Read the binary file input file, which contains invalid UTF-8
-    ## bytes, then write valid UTF-8 bytes to the output file.  Either
-    ## skip invalid bytes or replace them with U-FFFD.
-    ##
-    ## When there is an error, display the error message to standard out
-    ## and return 1, else return 0.  The input file must be under 50k.
-
-    if fileExistsAnd50kEcho(inFilename) != 0:
-      return 1
-
-    # Read the file into memory.
-    var inData: string
-    try:
-      inData = readFile(inFilename)
-    except:
-      echo "Unable to open and read the input file."
-      return 1
-
-    # Process the input data assuming it is UTF-8 encoded but it contains
-    # some invalid bytes. Return valid UTF-8 encoded bytes.
-    let outData = sanitizeUtf8Nim(inData, skipOrReplace)
-
-    # Write the valid UTF-8 data to the output file.
-    try:
-      writeFile(outFilename, outData)
-    except:
-      echo "Unable to open and write the output file."
-      return 1
-
-    result = 0 # success
-
-when testIconv:
-  proc writeValidUtf8FileIconv(inFilename: string, outFilename: string,
-                             skipInvalid: bool): int =
-    ## Read the binary file input file, which might contain invalid
-    ## UTF-8 bytes, then write valid UTF-8 bytes to the output file
-    ## either skipping the invalid bytes or replacing them with U-FFFD.
-    ##
-    ## When there is an error, display the error message to standard out
-    ## and return 1, else return 0.  The input file must be under 50k.
-
-    ## This is the version of iconv and how to get the version number:
-    ## iconv --version | head -1
-    ## iconv (GNU libiconv 1.11)
-
-    if fileExistsAnd50kEcho(inFilename) != 0:
-      return 1
-
-    # Run iconv on the input file to generate the output file.
-    var option: string
-    if skipInvalid:
-      option = "-c"
-    else:
-      # option = "--byte-subst='(%x!)'"
-      option = "--byte-subst='\xEF\xBF\xBD'"
-
-    discard execCmd("iconv $1 -f UTF-8 -t UTF-8 $2 >$3 2>/dev/null" % [
-      option, inFilename, outFilename])
-    if not fileExists(outFilename) or getFileSize(outFilename) == 0:
-      echo "Iconv did not generate a result file."
-      result = 1
-    else:
-      result = 0
-
-proc writeValidUtf8FilePython3(inFilename: string, outFilename: string,
-                           skipInvalid: bool): int =
-  ## Read the binary file input file, which might contain invalid
-  ## UTF-8 bytes, then write valid UTF-8 bytes to the output file
-  ## either skipping the invalid bytes or replacing them with U-FFFD.
-  ##
-  ## When there is an error, display the error message to standard out
-  ## and return 1, else return 0.  The input file must be under 50k.
-
-  if fileExistsAnd50kEcho(inFilename) != 0:
-    return 1
-
-  var option: string
-  if skipInvalid:
-    option = "-s"
-  else:
-    option = ""
-
-  # Run a python 3 script on the input file to generate the output
-  # file.
-  let cmd = "python3 testfiles/writeValidUtf8.py $1 $2 $3" % [
-    option, inFilename, outFilename]
-  discard execCmd(cmd)
-
-  if not fileExists(outFilename) or getFileSize(outFilename) == 0:
-    echo "Python did not generate a result file."
-    result = 1
-  else:
-    result = 0
-
-
-when testNodeJs:
-  proc writeValidUtf8FileNodeJs(inFilename: string, outFilename: string,
-                             skipInvalid: bool): int =
-    ## Read the binary file input file, which might contain invalid
-    ## UTF-8 bytes, then write valid UTF-8 bytes to the output file
-    ## either skipping the invalid bytes or replacing them with U-FFFD.
-    ##
-    ## When there is an error, display the error message to standard out
-    ## and return 1, else return 0.  The input file must be under 50k.
-
-    ## This is the version of node.js and how to get the version number:
-    ## node -v
-    ## v17.2.0
-
-    if fileExistsAnd50kEcho(inFilename) != 0:
-      return 1
-
-    # Run node js  on the input file to generate the output file.
-    var option: string
-    if skipInvalid:
-      option = "skip"
-    else:
-      option = "replace"
-
-    let cmd = "node testfiles/writeValidUtf8.js $1 $2 $3"
-
-    discard execCmd(cmd % [inFilename, outFilename, option])
-    if not fileExists(outFilename) or getFileSize(outFilename) == 0:
-      echo "WriteValidUtf8.js did not generate a result file."
-      result = 1
-    else:
-      result = 0
-
-proc compareTestLineEcho*(testLine: TestLine, eTestLine: TestLine): bool =
-  ## Compare to TestLine objects and show the differences. Return true
-  ## when equal.
-
-  result = true
-  if testLine.numStr != eTestLine.numStr:
-    echo "numStr expected: " & eTestLine.numStr
-    echo "            got: " & testLine.numStr
-    result = false
-
-  if testLine.testCase != eTestLine.testCase:
-    echo "testCase expected: " & eTestLine.testCase
-    echo "              got: " & testLine.testCase
-    result = false
-
-  if testLine.eSkip != eTestLine.eSkip:
-    echo "eSkip expected: " & eTestLine.eSkip
-    echo "           got: " & testLine.eSkip
-    result = false
-
-  if testLine.eReplace != eTestLine.eReplace:
-    echo "eReplace expected: " & eTestLine.eReplace
-    echo "              got: " & testLine.eReplace
-    result = false
 
 proc compareTablesEcho(eTable: OrderedTable[string, TestLine],
     gotTable: OrderedTable[string, TestLine],
@@ -669,6 +342,3 @@ proc testWriteValidUtf8File*(testProc: WriteValidUtf8File, option: string = "bot
       echo "------------------------------------------------------"
 
 
-proc runWriteValidUtf8FileNimEcho*(skipOrReplace: string = "replace") =
-  when testNim:
-    discard testWriteValidUtf8File(writeValidUtf8FileNim, "skip")
