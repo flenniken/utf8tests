@@ -4,41 +4,60 @@ import std/strutils
 import std/os
 import std/options
 import std/parseopt
+import std/strformat
 
 const
   versionNumber = "0.1.0"
-  
+
 type
   Args* = object
     ## Args holds the command line arguments.
     help*: bool
     version*: bool
-    skip*: bool
-    replace*: bool
-    filename*: string
+    replaceFilename*: string
+    skipFilename*: string
+    expectedFilename*: string # the utf8tests.txt filename
 
-proc checkFile*(filename: string): int =
-  ## Check the file for errors. Echo errors to the screen. Return 0 on
-  ## success.
+proc checkFile*(expectedFilename: string, filename: string,
+                skipOrReplace = "replace"): int =
+  ## Check the file for differences with the expected output. Echo
+  ## differences to the screen. Return 0 when the output matches the
+  ## expected output.
   echo "not implemented"
   return 1
+
+proc checkFile*(args: Args): int =
+  ## Check the file(s).
+
+  if args.skipFilename != "":
+    let rc = checkFile(args.expectedFilename, args.skipFilename, "skip")
+    if rc != 0:
+      result = rc
+
+  if args.replaceFilename != "":
+    let rc = checkFile(args.expectedFilename, args.replaceFilename, "skip")
+    if rc != 0:
+      result = rc
 
 proc getHelp(): string =
   ## Return the help message and usage text.
   result = """
-# UTF-8 Test Runner
+UTF-8 Test Comparer
 
-Check an UTF-8 file for errors. You generate the file from utf8tests.bin.
+Compare a file created from utf8tests.bin with the expected output
+defined in the utf8tests.txt file. Show the differences to the screen.
 
-## Usage
+A skip type file discards invalid byte sequences. A replace type file
+replaces invalid byte sequences with the Unicode replacment character
+U+FFFD, <EFBFBD>.
 
-utf8tests -h -s -r -f=filename
+utf8tests -h -e=utf8tests.txt [-s=filename] [-r=filename]
 
 * -h --help          Show this help message.
 * -v --version       Show the version number.
-* -s --skip          File was created skipping invalid byte sequences.
-* -r --replace       File was created replacing invalid byte sequences with U-FFFD <EFBFBD>.
-* -f --filename      File to check.
+* -e --expected      The utf8tests.txt file containing the expected results.
+* -s --skip          A skip type file to check.
+* -r --replace       A replace type file to check.
 """
 
 proc letterToWord(letter: char): string =
@@ -48,9 +67,9 @@ proc letterToWord(letter: char): string =
     switches = [
       ('h', "help"),
       ('v', "version"),
+      ('e', "expected"),
       ('s', "skip"),
       ('r', "replace"),
-      ('f', "filename"),
     ]
 
   for (ch, word) in switches:
@@ -66,20 +85,24 @@ proc handleOption(switch: string, word: string, value: string,
   ## letter.  Word is the long form of the switch. If the option
   ## cannot be handled, echo an error message. Return 0 on success.
 
-  if word == "filename":
+  case word
+  of "skip", "replace", "expected":
     if value == "":
-      echo "Missing filename. Use -f=filename"
+      echo fmt"Missing equal sign and filename. Use --{word}=filename"
       return 1
-    else:
-      args.filename = value
-  elif word == "help":
+    case word
+      of "skip":
+        args.skipFilename = value
+      of "replace":
+        args.replaceFilename = value
+      of "expected":
+        args.expectedFilename = value
+      else:
+        discard
+  of "help":
     args.help = true
-  elif word == "version":
+  of "version":
     args.version = true
-  elif word == "skip":
-    args.skip = true
-  elif word == "replace":
-    args.replace = true
   else:
     echo "Unknown switch: " & word
     return 1
@@ -116,6 +139,20 @@ proc parseRunCommandLine*(argv: seq[string]): Option[Args] =
       of CmdLineKind.cmdEnd:
         discard
 
+  # Check for missing required args.
+  var emptyArgs: Args
+  if args == emptyArgs:
+    echo "Missing required arguments, use -h for help."
+    return
+  if not args.help and not args.version:
+    if args.expectedFilename == "":
+      echo "The -e=utftests.txt argument is required."
+      return
+
+    if args.skipFilename == "" and args.replaceFilename == "":
+      echo "The -s=filename or -r=filename argument is required."
+      return
+
   result = some(args)
 
 proc processArgs(args: Args): int =
@@ -126,11 +163,8 @@ proc processArgs(args: Args): int =
     echo getHelp()
   elif args.version:
     echo versionNumber
-  elif args.filename != "":
-    result = checkFile(args.filename)
   else:
-    echo "Missing argments, use -h for help."
-    result = 1
+    result = checkFile(args)
 
 proc main(argv: seq[string]): int =
   ## Run UTF-8 test files. Return 0 when successful.
