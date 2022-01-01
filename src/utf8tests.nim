@@ -5,6 +5,7 @@ import std/os
 import std/options
 import std/parseopt
 import std/strformat
+import checks
 
 const
   versionNumber = "0.1.0"
@@ -18,14 +19,6 @@ type
     skipFilename*: string
     expectedFilename*: string # the utf8tests.txt filename
 
-proc checkFile*(expectedFilename: string, filename: string,
-                skipOrReplace = "replace"): int =
-  ## Check the file for differences with the expected output. Echo
-  ## differences to the screen. Return 0 when the output matches the
-  ## expected output.
-  echo "not implemented"
-  return 1
-
 proc checkFile*(args: Args): int =
   ## Check the file(s).
 
@@ -35,7 +28,7 @@ proc checkFile*(args: Args): int =
       result = rc
 
   if args.replaceFilename != "":
-    let rc = checkFile(args.expectedFilename, args.replaceFilename, "skip")
+    let rc = checkFile(args.expectedFilename, args.replaceFilename, "replace")
     if rc != 0:
       result = rc
 

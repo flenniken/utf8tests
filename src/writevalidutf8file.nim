@@ -3,7 +3,6 @@ import std/strutils
 import std/unicode
 import std/osproc
 import unicodes
-import checks
 
 const
   # The tests turned off do not pass.
@@ -89,7 +88,7 @@ proc fileExistsAnd50kEcho(filename: string): int =
   result = 0
 
 when testNim:
-  proc writeValidUtf8FileNim(inFilename: string, outFilename: string,
+  proc writeValidUtf8FileNim*(inFilename: string, outFilename: string,
                              skipOrReplace = "replace"): int =
     ## Read the binary file input file, which contains invalid UTF-8
     ## bytes, then write valid UTF-8 bytes to the output file.  Either
@@ -217,9 +216,3 @@ when testNodeJs:
       result = 1
     else:
       result = 0
-
-
-proc runWriteValidUtf8FileNimEcho*(skipOrReplace: string = "replace") =
-  when testNim:
-    discard testWriteValidUtf8File(writeValidUtf8FileNim, "skip")
-

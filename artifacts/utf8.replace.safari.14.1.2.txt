@@ -1,0 +1,206 @@
+1.0.1:valid:1
+1.1.0:valid:abc
+2.1.0:valid:©
+3.0:valid:‐
+4.0:valid:𝒜
+5.0:valid:�
+5.1:valid:
+5.2:valid:ࠀ
+5.3:valid:𐀀
+6.0:invalid:����
+6.1:invalid:�����
+6.2:invalid:�����
+6.3:invalid:������
+6.4:invalid:������
+6.5:invalid:�������
+7.1:valid:
+7.2:valid:
+7.3:valid:
+8.0:valid:
+8.1:valid:߿
+8.2:valid:￿
+8.3:valid:􏿿
+9.0:invalid:���
+10.0:valid:￿
+10.1:valid:
+10.2:valid:�
+10.3:valid:􏿿
+11.0:invalid:�
+11.1:invalid:�
+11.2:invalid:��
+11.3:invalid:���
+11.4:invalid:����
+11.5:invalid:�����
+11.6:invalid:������
+12.0:invalid:��������
+12.1:invalid:��������
+12.2:invalid:��������
+12.3:invalid:��������
+12.4:invalid:��������
+12.5:invalid:��������
+12.6:invalid:��������
+12.7:invalid:��������
+13.0:invalid:� � � � 
+13.1:invalid:� � � � 
+13.2:invalid:� � � � 
+13.3:invalid:� � � � 
+13.4:invalid:� � � � 
+13.5:invalid:� � � � 
+13.6:invalid:� � � � 
+13.7:invalid:� � � � 
+14.0:invalid:� � � � 
+14.1:invalid:� � � � 
+14.2:invalid:� � � � 
+14.3:invalid:� � � � 
+15.0:invalid:� � 
+15.1:invalid:� � 
+15.2:invalid:� � 
+15.3:invalid:� � 
+16.0:invalid:� 
+16.1:invalid:� 
+16.2:invalid:� 
+16.3:invalid:� 
+17.0:invalid:� 
+17.1:invalid:� 
+18.0:invalid:�
+18.1:invalid:��
+18.2:invalid:���
+18.3:invalid:����
+18.4:invalid:�����
+19.0:invalid:�
+19.1:invalid:�
+19.2:invalid:���
+19.3:invalid:����
+19.4:invalid:�����
+19.5:invalid:123�
+19.6:invalid:123��
+21.0:invalid:�
+21.1:invalid:�
+21.2:invalid:�
+21.3:invalid:�
+21.4:invalid:7�
+21.5:invalid:78�
+21.6:invalid:789�
+22.0:valid:/
+22.1:valid:/
+22.2:invalid:��
+22.3:invalid:���
+22.4:invalid:����
+22.5:invalid:�����
+22.6:invalid:������
+22.7:valid:ࠀ
+23.0:invalid:��
+23.1:invalid:���
+23.2:invalid:����
+23.3:invalid:�����
+24.0:invalid:���
+24.0.1:invalid:���5
+24.0.2:invalid:123���1
+24.2:invalid:���
+24.3:invalid:���
+24.4:invalid:���
+24.5:invalid:���
+24.6:invalid:���
+24.7:invalid:���
+25.0:invalid:������
+25.1:invalid:������
+25.2:invalid:������
+25.3:invalid:������
+25.4:invalid:������
+25.5:invalid:������
+25.6:invalid:������
+25.7:invalid:������
+26.0:valid:￾
+26.1:valid:￿
+26.2:valid:﷐
+26.3:valid:﷑
+26.4:valid:﷒
+26.5:valid:﷓
+26.6:valid:﷔
+26.7:valid:﷕
+26.8:valid:﷖
+26.9:valid:﷗
+26.10:valid:﷘
+26.11:valid:﷙
+26.12:valid:﷚
+26.13:valid:﷛
+26.14:valid:﷜
+26.15:valid:﷝
+26.16:valid:﷞
+26.17:valid:﷟
+27.0:valid:🿾
+27.1:valid:𯿾
+27.2:valid:𿿾
+27.3:valid:񏿾
+27.4:valid:񟿾
+27.5:valid:񯿾
+27.6:valid:񿿾
+27.7:valid:򏿾
+27.8:valid:򟿾
+27.9:valid:򯿾
+27.10:valid:򿿾
+27.11:valid:󏿾
+27.12:valid:󟿾
+27.13:valid:󯿾
+27.14:valid:󿿾
+27.15:valid:􏿾
+28.0:valid:🿿
+28.1:valid:𯿿
+28.2:valid:𿿿
+28.3:valid:񏿿
+28.4:valid:񟿿
+28.5:valid:񯿿
+28.6:valid:񿿿
+28.7:valid:򏿿
+28.8:valid:򟿿
+28.9:valid:򯿿
+28.10:valid:򿿿
+28.11:valid:󏿿
+28.12:valid:󟿿
+28.13:valid:󯿿
+28.14:valid:󿿿
+28.15:valid:􏿿
+29.0:invalid:�
+29.1:invalid: �
+29.2:invalid: !!#� 
+29.3:invalid: !!#$�
+29.4:invalid:� 
+29.5:invalid: � 
+29.6:invalid:� 
+29.7:invalid:� 
+29.8:invalid:� 
+29.9:invalid:� 
+30.0:invalid:��
+30.1:invalid:�
+30.2:invalid:��
+30.3:invalid:��
+30.4:invalid:��
+30.5:invalid:�
+30.6:invalid:��
+30.7:invalid:��
+31.0:invalid:���
+31.1:invalid:��
+31.2:invalid:���
+31.3:invalid:���
+32.0:invalid:��
+32.1:invalid:�
+32.2:invalid:��
+32.3:invalid:��
+33.0:invalid:��
+33.1:invalid:�
+33.2:invalid:��
+33.3:invalid:��
+34.0:invalid:��
+34.1:invalid:�
+34.2:invalid:��
+34.3:invalid:��
+35.0:invalid:��
+35.1:invalid:�
+35.2:invalid:��
+35.3:invalid:��
+36.0:valid:�
+37.0:invalid:��
+37.1:invalid:���
+37.2:invalid:����
+37.2.1:valid: �5
+37.3:invalid: � �

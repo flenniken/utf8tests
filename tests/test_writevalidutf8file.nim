@@ -46,6 +46,10 @@ suite "writevalidutf8file.nim":
     let rc = generateArtifacts("ref", writeValidUtf8Ref)
     check rc == 0
 
+  test "generate nim artifacts":
+    let rc = generateArtifacts("nim.1.4.8", writeValidUtf8FileNim)
+    check rc == 0
+
   test "generate python3 artifacts":
     let rc = generateArtifacts("python.3.7.5", writeValidUtf8FilePython3)
     check rc == 0

@@ -11,6 +11,9 @@ const
   binTestCases* = "utf8tests.bin"
 
 type
+  WriteValidUtf8File* = proc (inFilename, outFilename: string,
+    skipOrReplace = "replace"): int
+
   TestLine* = object
     ## TestLine holds the information from a test line.
     valid*: bool  # valid type of line or invalid type.
@@ -198,7 +201,11 @@ proc readTestCasesFile*(filename: string):
     # Parse a test line.
     let testLineOr = parseTestLine(line)
     if testLineOr.isMessage:
-      return newOpResultMessage("Line $1: $2" % [$lineNum, testLineOr.message])
+      # This is a warning. Later, when the tables are compared, the
+      # missing tests will be noted.
+      echo newOpResultMessage("Line $1: $2" % [$lineNum, testLineOr.message])
+      # return newOpResultMessage("Line $1: $2" % [$lineNum, testLineOr.message])
+      continue
     let testLine = testLineOr.value
 
     # Add the test line to the dictionary.
@@ -240,20 +247,20 @@ proc createUtf8testsBinFile*(resultFilename: string): string =
 
 proc compareTablesEcho(eTable: OrderedTable[string, TestLine],
     gotTable: OrderedTable[string, TestLine],
-    skipOrReplace="replace"): bool =
-  ## Compare to tables and show the differences.
+    skipOrReplace="replace"): int =
+  ## Compare to tables and show the differences. Return 0 when they
+  ## are the same.
 
-  result = true
   if eTable.len != gotTable.len:
     echo "The two tables have different number of elements."
     echo "expected: " & $eTable.len
     echo "     got: " & $gotTable.len
-    result = false
+    result = 1
 
   for eNumStr, eTestLine in pairs(eTable):
     if not gotTable.hasKey(eNumStr):
       echo fmt"test number '{eNumStr}' does not exist in the generated table."
-      result = false
+      result = 1
       continue
     let gotTestLine = gotTable[eNumStr]
 
@@ -276,67 +283,30 @@ proc compareTablesEcho(eTable: OrderedTable[string, TestLine],
       echo "$1: test case: $2" % [eTestLine.numStr, stringToHex(eTestLine.testCase)]
       echo "$1:  expected: $2" % [eTestLine.numStr, expected]
       echo "$1:       got: $2" % [eTestLine.numStr, stringToHex(gotTestLine.testCase)]
-      result = false
+      echo ""
+      result = 1
 
 
-type
-  WriteValidUtf8File* = proc (inFilename, outFilename: string,
-                             skipOrReplace = "replace"): int
+proc checkFile*(expectedFilename: string, gotFilename: string,
+                skipOrReplace = "replace"): int =
+  ## Check the file for differences with the expected output. Echo
+  ## differences to the screen. Return 0 when the output matches the
+  ## expected output.
 
-proc testWriteValidUtf8File*(testProc: WriteValidUtf8File, option: string = "both"): bool =
-  ## Test a WriteValidUtf8File procedure.  The option parameter
-  ## determines which tests get run, pass "skip", "replace", or
-  ## "both".
-
-  if not (option in ["skip", "replace", "both"]):
-    echo "Pass 'skip', 'replace' or 'both'."
-    return false
+  let gotTableOr = readTestCasesFile(gotFilename)
+  if gotTableOr.isMessage:
+    echo gotTableOr.message
+    return 1
+  let gotTable = gotTableOr.value
 
   let eTableOr = readTestCasesFile(testCases)
   if eTableOr.isMessage:
-    echo "Unable to read the test cases file."
     echo eTableOr.message
-    return false
+    return 1
   let eTable = eTableOr.value
 
-  let msg = createUtf8testsBinFile(binTestCases)
-  if msg != "":
-    echo msg
-    return false
+  # Compare the got table with the expected table.
+  let rc = compareTablesEcho(eTable, gotTable, skipOrReplace)
+  if rc != 0:
+    result = 1
 
-  result = true
-  var rc: int
-
-  var loop: seq[string]
-  if option == "both":
-    loop = @["skip", "replace"]
-  else:
-    loop = @[option]
-
-  result = true
-  for skipOrReplace in loop:
-
-    # Call the write procedure to generate a file.
-    let gotFile = "temp-$1.txt" % skipOrReplace
-    rc = testProc(binTestCases, gotFile, skipOrReplace)
-    if rc != 0:
-      echo fmt"The WriteValidUtf8File procedure failed with '{skipOrReplace}'."
-      result = false
-      continue
-
-    # Read the file just generated into a table.
-    let gotTableOr = readTestCasesFile(gotFile)
-    discard tryRemoveFile(gotFile)
-    if gotTableOr.isMessage:
-      echo "Unable to read the generated file."
-      echo gotTableOr.message
-      result = false
-      continue
-    let gotTable = gotTableOr.value
-
-    # Compare the table with the expected table.
-    let passed = compareTablesEcho(eTable, gotTable, skipOrReplace)
-    if not passed:
-      result = false
-      echo "WriteValidUtf8File with '$1' failed, see above." % skipOrReplace
-      echo "------------------------------------------------------"
