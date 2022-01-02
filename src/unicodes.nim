@@ -74,7 +74,7 @@ func validateUtf8String*(str: string): int =
     result = -1
 
 func sanitizeUtf8*(str: string, skipOrReplace: string = "replace"): string =
-  ## Sanitize and return the UTF-8 string. The skipInvalid parameter
+  ## Sanitize and return the UTF-8 string. The skipOrReplace parameter
   ## determines whether to skip or replace invalid bytes.  When
   ## replacing the U+FFFD character is used.
 

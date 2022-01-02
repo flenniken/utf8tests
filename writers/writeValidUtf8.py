@@ -7,10 +7,10 @@ import argparse
 import os
 import unittest
 
-def writeValidUtf8(in_filename, out_filename, skipInvalid):
+def writeValidUtf8(in_filename, out_filename, skipOrReplace = 'replace'):
   """
   Read the input file bytes and write it to the output file as
-  UTF-8. When skipInvalid is true, drop the invalid bytes, else
+  UTF-8. When skipOrReplace is skip, drop the invalid bytes, else
   replace them with U+FFFD.
   """
   # Read the input file into memory as bytes.
@@ -22,7 +22,7 @@ def writeValidUtf8(in_filename, out_filename, skipInvalid):
 
   # Decode the bytes as utf8 to produce a utf8 string. Drop the
   # invalid bytes.
-  if skipInvalid:
+  if skipOrReplace == 'skip':
     option = 'ignore'
   else:
     option = 'replace'
@@ -45,8 +45,6 @@ def parse_command_line(argv):
   parser = argparse.ArgumentParser(description="""\
 Read an input file and write it to a utf8 output file.
 """)
-  parser.add_argument("-s", "--skipInvalid", action="store_true", default=False,
-                       help="skip invalid bytes, else replace them with U+FFFD")
   parser.add_argument("-t", "--test", action="store_true", default=False,
                        help="run unit tests")
   parser.add_argument("in_filename", type=str,
@@ -55,6 +53,9 @@ Read an input file and write it to a utf8 output file.
   parser.add_argument("out_filename", type=str,
                         help="the output file",
                         default=None)
+  parser.add_argument("skipOrReplace", type=str, nargs="?",
+                        help="'skip' or 'replace', default 'replace'",
+                        default="replace")
   args = parser.parse_args(argv[1:])
   return args
 
@@ -66,7 +67,7 @@ def create_file(filename, content):
 def hexBytes(byteData):
   return " ".join(["{:02x}".format(x) for x in byteData])
 
-def run_writeValidUtf8(in_bytes, skipInvalid = True):
+def run_writeValidUtf8(in_bytes, skipOrReplace = "replace"):
   """
   Call writeValidUtf8 passing in the given input bytes. Return the
   resulting bytes.
@@ -75,7 +76,7 @@ def run_writeValidUtf8(in_bytes, skipInvalid = True):
   create_file(in_filename, in_bytes)
 
   out_filename = "out_temp.txt"
-  writeValidUtf8(in_filename, out_filename, skipInvalid)
+  writeValidUtf8(in_filename, out_filename, skipOrReplace)
 
   if not os.path.exists(out_filename):
     return "out_filename was not created."
@@ -87,21 +88,21 @@ def run_writeValidUtf8(in_bytes, skipInvalid = True):
   os.remove(out_filename)
   return fileData
 
-def test_writeValidUtf8(in_bytes, expected_bytes, skipInvalid = True):
+def test_writeValidUtf8(in_bytes, expected_bytes, skipOrReplace = "replace"):
   """
   Call writeValidUtf8 passing in the given input bytes, then verify the
-  result file contains the given expected bytes.
+  result file contains the given expected bytes. Return 0 on success.
   """
   in_filename = "in_temp.txt"
   create_file(in_filename, in_bytes)
 
   out_filename = "out_temp.txt"
-  writeValidUtf8(in_filename, out_filename, skipInvalid)
+  writeValidUtf8(in_filename, out_filename, skipOrReplace)
 
-  rc = True
+  rc = 0
   if not os.path.exists(out_filename):
     print("out_filename was not created.")
-    rc = False
+    rc = 1
 
   with open(out_filename, "rb") as fh:
     fileData = fh.read()
@@ -110,7 +111,7 @@ def test_writeValidUtf8(in_bytes, expected_bytes, skipInvalid = True):
     print("     got: %s" % fileData)
     print("     got: %s" % hexBytes(fileData))
     print("expected: %s" % hexBytes(expected_bytes))
-    rc = False
+    rc = 1
 
   os.remove(in_filename)
   os.remove(out_filename)
@@ -150,90 +151,90 @@ expected: %s
     input_bytes = b'\xff'
     expectedSkip = b''
     expectedReplace = b'\xEF\xBF\xBD'
-    got = run_writeValidUtf8(input_bytes, True)
+    got = run_writeValidUtf8(input_bytes, 'skip')
     self.assert_got(got, expectedSkip)
-    got = run_writeValidUtf8(input_bytes, False)
+    got = run_writeValidUtf8(input_bytes, "replace")
     self.assert_got(got, expectedReplace)
 
   def test_invalid_two_bytes(self):
     input_bytes = b'\xff\xfe'
     expectedSkip = b''
     expectedReplace = b'\xEF\xBF\xBD\xEF\xBF\xBD'
-    got = run_writeValidUtf8(input_bytes, True)
+    got = run_writeValidUtf8(input_bytes, 'skip')
     self.assert_got(got, expectedSkip)
-    got = run_writeValidUtf8(input_bytes, False)
+    got = run_writeValidUtf8(input_bytes, "replace")
     self.assert_got(got, expectedReplace)
 
   def test_invalid_three_bytes(self):
     input_bytes = b'\xff\xfe\xfd'
     expectedSkip = b''
     expectedReplace = b'\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD'
-    got = run_writeValidUtf8(input_bytes, True)
+    got = run_writeValidUtf8(input_bytes, 'skip')
     self.assert_got(got, expectedSkip)
-    got = run_writeValidUtf8(input_bytes, False)
+    got = run_writeValidUtf8(input_bytes, "replace")
     self.assert_got(got, expectedReplace)
 
   def test_invalid_four_bytes(self):
     input_bytes = b'\xff\xfe\xfd\xfe'
     expectedSkip = b''
     expectedReplace = b'\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD'
-    got = run_writeValidUtf8(input_bytes, True)
+    got = run_writeValidUtf8(input_bytes, 'skip')
     self.assert_got(got, expectedSkip)
-    got = run_writeValidUtf8(input_bytes, False)
+    got = run_writeValidUtf8(input_bytes, "replace")
     self.assert_got(got, expectedReplace)
 
   def test_invalid_two_bytes_seq(self):
     input_bytes = b'\xc2\xc0'
     expectedSkip = b''
     expectedReplace = b'\xEF\xBF\xBD\xEF\xBF\xBD'
-    got = run_writeValidUtf8(input_bytes, True)
+    got = run_writeValidUtf8(input_bytes, 'skip')
     self.assert_got(got, expectedSkip)
-    got = run_writeValidUtf8(input_bytes, False)
+    got = run_writeValidUtf8(input_bytes, "replace")
     self.assert_got(got, expectedReplace)
 
   def test_invalid_1(self):
     input_bytes = b'\xc2\x31'
     expectedSkip = b'1'
     expectedReplace = b'\xEF\xBF\xBD1'
-    got = run_writeValidUtf8(input_bytes, True)
+    got = run_writeValidUtf8(input_bytes, 'skip')
     self.assert_got(got, expectedSkip)
-    got = run_writeValidUtf8(input_bytes, False)
+    got = run_writeValidUtf8(input_bytes, "replace")
     self.assert_got(got, expectedReplace)
 
   def test_invalid_2(self):
     input_bytes = b'\xe1\x80'
     expectedSkip = b''
     expectedReplace = b'\xEF\xBF\xBD'
-    got = run_writeValidUtf8(input_bytes, True)
+    got = run_writeValidUtf8(input_bytes, 'skip')
     self.assert_got(got, expectedSkip)
-    got = run_writeValidUtf8(input_bytes, False)
+    got = run_writeValidUtf8(input_bytes, "replace")
     self.assert_got(got, expectedReplace)
 
   def test_invalid_3(self):
     input_bytes = b'\xf4\x80\x80'
     expectedSkip = b''
     expectedReplace = b'\xEF\xBF\xBD'
-    got = run_writeValidUtf8(input_bytes, True)
+    got = run_writeValidUtf8(input_bytes, 'skip')
     self.assert_got(got, expectedSkip)
-    got = run_writeValidUtf8(input_bytes, False)
+    got = run_writeValidUtf8(input_bytes, "replace")
     self.assert_got(got, expectedReplace)
 
   def test_invalid_f0(self):
     input_bytes = b'\xf0\x8f'
     expectedSkip = b''
     expectedReplace = b'\xEF\xBF\xBD\xEF\xBF\xBD'
-    got = run_writeValidUtf8(input_bytes, True)
+    got = run_writeValidUtf8(input_bytes, 'skip')
     self.assert_got(got, expectedSkip)
-    got = run_writeValidUtf8(input_bytes, False)
+    got = run_writeValidUtf8(input_bytes, "replace")
     self.assert_got(got, expectedReplace)
 
   def test_invalid_f0_2(self):
     input_bytes = b'\xf0\x90\xc0'
     expectedSkip = b''
     expectedReplace = b'\xEF\xBF\xBD\xEF\xBF\xBD'
-    got = run_writeValidUtf8(input_bytes, True)
+    got = run_writeValidUtf8(input_bytes, 'skip')
     self.assert_got(got, expectedSkip)
-    got = run_writeValidUtf8(input_bytes, False)
+    got = run_writeValidUtf8(input_bytes, "replace")
     self.assert_got(got, expectedReplace)
 
 if __name__ == "__main__":
@@ -246,4 +247,4 @@ if __name__ == "__main__":
     sys.argv = sys.argv[1:]
     unittest.main()
   else:
-    writeValidUtf8(args.in_filename, args.out_filename, args.skipInvalid)
+    writeValidUtf8(args.in_filename, args.out_filename, args.skipOrReplace)

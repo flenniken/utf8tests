@@ -84,6 +84,8 @@ proc writeValidUtf8FileNim*(inFilename: string, outFilename: string,
   if fileExistsAnd50kEcho(inFilename) != 0:
     return 1
 
+  discard tryRemoveFile(outFilename)
+
   # Read the file into memory.
   var inData: string
   try:
@@ -105,8 +107,8 @@ proc writeValidUtf8FileNim*(inFilename: string, outFilename: string,
 
   result = 0 # success
 
-proc writeValidUtf8FileIconv(inFilename: string, outFilename: string,
-                           skipInvalid: bool): int =
+proc writeValidUtf8FileIconv*(inFilename: string, outFilename: string,
+    skipOrReplace = "replace"): int =
   ## Read the binary file input file, which might contain invalid
   ## UTF-8 bytes, then write valid UTF-8 bytes to the output file
   ## either skipping the invalid bytes or replacing them with U+FFFD.
@@ -121,9 +123,11 @@ proc writeValidUtf8FileIconv(inFilename: string, outFilename: string,
   if fileExistsAnd50kEcho(inFilename) != 0:
     return 1
 
+  discard tryRemoveFile(outFilename)
+
   # Run iconv on the input file to generate the output file.
   var option: string
-  if skipInvalid:
+  if skipOrReplace == "skip":
     option = "-c"
   else:
     # option = "--byte-subst='(%x!)'"
@@ -140,16 +144,12 @@ proc writeValidUtf8FileIconv(inFilename: string, outFilename: string,
 proc writeValidUtf8FilePython3*(inFilename: string, outFilename: string,
     skipOrReplace = "replace"): int =
 
-  var option: string
-  if skipOrReplace == "skip":
-    option = "-s"
-  else:
-    option = ""
+  discard tryRemoveFile(outFilename)
 
   # Run a python 3 script on the input file to generate the output
   # file.
   let cmd = "python3 writers/writeValidUtf8.py $1 $2 $3" % [
-    option, inFilename, outFilename]
+    inFilename, outFilename, skipOrReplace]
   discard execCmd(cmd)
 
   if not fileExists(outFilename) or getFileSize(outFilename) == 0:
@@ -167,6 +167,8 @@ proc writeValidUtf8FileNodeJs*(inFilename: string, outFilename: string,
 
   if fileExistsAnd50kEcho(inFilename) != 0:
     return 1
+
+  discard tryRemoveFile(outFilename)
 
   # Run node js on the input file to generate the output file.
   let cmd = "node writers/writeValidUtf8.js $1 $2 $3"

@@ -56,3 +56,7 @@ suite "writevalidutf8file.nim":
   test "generate node.js artifacts":
     let rc = generateArtifacts("nodejs.17.2.0", writeValidUtf8FileNodeJs, @["replace"])
     check rc == 0
+
+  test "generate iconv artifacts":
+    let rc = generateArtifacts("iconv.1.11", writeValidUtf8FileIconv, @["skip"])
+    check rc == 0
