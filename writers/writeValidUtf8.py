@@ -203,20 +203,20 @@ expected: %s
   def test_invalid_2(self):
     input_bytes = b'\xe1\x80'
     expectedSkip = b''
-    expectedReplace = b'\xEF\xBF\xBD\xEF\xBF\xBD'
+    expectedReplace = b'\xEF\xBF\xBD'
     got = run_writeValidUtf8(input_bytes, True)
     self.assert_got(got, expectedSkip)
     got = run_writeValidUtf8(input_bytes, False)
-    # self.assert_got(got, expectedReplace)
+    self.assert_got(got, expectedReplace)
 
   def test_invalid_3(self):
     input_bytes = b'\xf4\x80\x80'
     expectedSkip = b''
-    expectedReplace = b'\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD'
+    expectedReplace = b'\xEF\xBF\xBD'
     got = run_writeValidUtf8(input_bytes, True)
     self.assert_got(got, expectedSkip)
     got = run_writeValidUtf8(input_bytes, False)
-    # self.assert_got(got, expectedReplace)
+    self.assert_got(got, expectedReplace)
 
   def test_invalid_f0(self):
     input_bytes = b'\xf0\x8f'
@@ -225,16 +225,16 @@ expected: %s
     got = run_writeValidUtf8(input_bytes, True)
     self.assert_got(got, expectedSkip)
     got = run_writeValidUtf8(input_bytes, False)
-    # self.assert_got(got, expectedReplace)
+    self.assert_got(got, expectedReplace)
 
   def test_invalid_f0_2(self):
     input_bytes = b'\xf0\x90\xc0'
     expectedSkip = b''
-    expectedReplace = b'\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD'
+    expectedReplace = b'\xEF\xBF\xBD\xEF\xBF\xBD'
     got = run_writeValidUtf8(input_bytes, True)
     self.assert_got(got, expectedSkip)
     got = run_writeValidUtf8(input_bytes, False)
-    # self.assert_got(got, expectedReplace)
+    self.assert_got(got, expectedReplace)
 
 if __name__ == "__main__":
   if sys.version_info < (3, 0):

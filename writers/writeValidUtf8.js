@@ -20,9 +20,10 @@ function writeValidUtf8(inFilename, outFilename, skipOrReplace) {
     return 1
   }
 
+  // Encode the data as UTF-8.
   var newData = Buffer.from(data, 'utf-8').toString();
 
-  // Write the data as UTF-8. The default is utf8.
+  // Write the data.
   try {
     fs.writeFileSync(outFilename, newData)
   }
