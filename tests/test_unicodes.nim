@@ -91,3 +91,59 @@ suite "unicodes.nim":
     check testSanitizeutf8("\xf4\x80\x31", "\xef\xbf\xbd\x31", "replace")
     check testSanitizeutf8("\xf0\x90\x80\x31", "\xef\xbf\xbd\x31", "replace")
     check testSanitizeutf8("\xf1\x80\x80\xff", "\xef\xbf\xbd\xef\xbf\xbd", "replace")
+
+    check testSanitizeutf8("\xf4\x80", "\xef\xbf\xbd", "replace")
+    check testSanitizeutf8("\xf0\x90\x80", "\xef\xbf\xbd", "replace")
+
+  test "validateUtf8String":
+    check validateUtf8String("") == -1
+    check validateUtf8String("d") == -1
+    check validateUtf8String("asdf") == -1
+    check validateUtf8String("\xC2\xA9") == -1
+    check validateUtf8String("\xE2\x80\x90") == -1
+    check validateUtf8String("\xF0\x9D\x92\x9C") == -1
+    check validateUtf8String("asdf\xF0\x9D\x92\x9C\xE2\x80\x90\xC2\xA9") == -1
+
+  test "validateUtf8String pos":
+    check validateUtf8String("\xff") == 0
+    check validateUtf8String("1\xff") == 1
+    check validateUtf8String("12\xff") == 2
+    check validateUtf8String("12\xC2\xA9\xff") == 4
+    check validateUtf8String("\xff3") == 0
+    check validateUtf8String("\xff43") == 0
+    check validateUtf8String("\xf1\x80\x80\x00") == 0
+    check validateUtf8String("22\xf1\x80\x80\x00") == 2
+    check validateUtf8String("\xf4\x80\x80\x00") == 0
+    check validateUtf8String("\xf0\x90\x80\x00") == 0
+    check validateUtf8String("\xed\x80\x00") == 0
+    check validateUtf8String("\xe0\x80\x7f") == 0
+
+    check validateUtf8String("\xf4\x80\x80") == 0
+    check validateUtf8String("\xf0\x90\x80") == 0
+    check validateUtf8String("\xed\x80") == 0
+    check validateUtf8String("\xe0\x80") == 0
+
+  test "utf8CharString":
+    check utf8CharString("a", 0) == "a"
+    check utf8CharString("ab", 0) == "a"
+
+    check utf8CharString("ab", 1) == "b"
+    check utf8CharString("abc", 1) == "b"
+    check utf8CharString("abc", 2) == "c"
+
+  test "utf8CharString invalid index":
+    check utf8CharString("", 0) == ""
+    check utf8CharString("a", 1) == ""
+    check utf8CharString("a", 2) == ""
+    check utf8CharString("abc", 3) == ""
+
+  test "utf8CharString multi-byte":
+    check utf8CharString("\xC2\xA9", 0) == "\xC2\xA9"
+    check utf8CharString("\xE2\x80\x90", 0) == "\xE2\x80\x90"
+    check utf8CharString("\xF0\x9D\x92\x9C", 0) == "\xF0\x9D\x92\x9C"
+    check utf8CharString("asdf\xF0\x9D\x92\x9C\xE2\x80\x90\xC2\xA9", 4) == "\xF0\x9D\x92\x9C"
+  test "utf8CharString start in the middle":
+    check utf8CharString("\xC2\xA9", 1) == ""
+    check utf8CharString("\xF0\x9D\x92\x9C", 1) == ""
+    check utf8CharString("\xF0\x9D\x92\x9C", 2) == ""
+    check utf8CharString("\xF0\x9D\x92\x9C", 3) == ""

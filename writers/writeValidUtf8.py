@@ -11,7 +11,7 @@ def writeValidUtf8(in_filename, out_filename, skipInvalid):
   """
   Read the input file bytes and write it to the output file as
   UTF-8. When skipInvalid is true, drop the invalid bytes, else
-  replace them with U-FFFD.
+  replace them with U+FFFD.
   """
   # Read the input file into memory as bytes.
   if not os.path.exists(in_filename):
@@ -46,7 +46,7 @@ def parse_command_line(argv):
 Read an input file and write it to a utf8 output file.
 """)
   parser.add_argument("-s", "--skipInvalid", action="store_true", default=False,
-                       help="skip invalid bytes, else replace them with U-FFFD")
+                       help="skip invalid bytes, else replace them with U+FFFD")
   parser.add_argument("-t", "--test", action="store_true", default=False,
                        help="run unit tests")
   parser.add_argument("in_filename", type=str,

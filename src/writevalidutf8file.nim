@@ -15,7 +15,7 @@ proc writeValidUtf8Ref*(inFilename: string, outFilename: string,
     skipOrReplace = "replace"): int =
   ## Read the binary file input file, which contains invalid UTF-8
   ## bytes, then write valid UTF-8 bytes to the output file either
-  ## skipping the invalid bytes or replacing them with U-FFFD.
+  ## skipping the invalid bytes or replacing them with U+FFFD.
   ##
   ## When there is an error, display the error message to standard out
   ## and return 1, else return 0.  The input file must be under 50k.
@@ -52,7 +52,7 @@ proc writeValidUtf8Ref*(inFilename: string, outFilename: string,
 proc sanitizeUtf8Nim*(str: string, skipOrReplace = "replace"): string =
   ## Sanitize and return the UTF-8 string. The skipOrReplace parameter
   ## determines whether to skip or replace invalid bytes.  When
-  ## replacing the U-FFFD character is used.
+  ## replacing the U+FFFD character is used.
 
   # Reserve space for the result string the same size as the input string.
   result = newStringOfCap(str.len)
@@ -92,7 +92,7 @@ when testNim:
                              skipOrReplace = "replace"): int =
     ## Read the binary file input file, which contains invalid UTF-8
     ## bytes, then write valid UTF-8 bytes to the output file.  Either
-    ## skip invalid bytes or replace them with U-FFFD.
+    ## skip invalid bytes or replace them with U+FFFD.
     ##
     ## When there is an error, display the error message to standard out
     ## and return 1, else return 0.  The input file must be under 50k.
@@ -128,7 +128,7 @@ when testIconv:
                              skipInvalid: bool): int =
     ## Read the binary file input file, which might contain invalid
     ## UTF-8 bytes, then write valid UTF-8 bytes to the output file
-    ## either skipping the invalid bytes or replacing them with U-FFFD.
+    ## either skipping the invalid bytes or replacing them with U+FFFD.
     ##
     ## When there is an error, display the error message to standard out
     ## and return 1, else return 0.  The input file must be under 50k.
@@ -160,7 +160,7 @@ proc writeValidUtf8FilePython3*(inFilename: string, outFilename: string,
     skipOrReplace = "replace"): int =
   ## Read the binary file input file, which might contain invalid
   ## UTF-8 bytes, then write valid UTF-8 bytes to the output file
-  ## either skipping the invalid bytes or replacing them with U-FFFD.
+  ## either skipping the invalid bytes or replacing them with U+FFFD.
   ##
   ## When there is an error, display the error message to standard out
   ## and return 1, else return 0.
@@ -189,7 +189,7 @@ when testNodeJs:
                              skipInvalid: bool): int =
     ## Read the binary file input file, which might contain invalid
     ## UTF-8 bytes, then write valid UTF-8 bytes to the output file
-    ## either skipping the invalid bytes or replacing them with U-FFFD.
+    ## either skipping the invalid bytes or replacing them with U+FFFD.
     ##
     ## When there is an error, display the error message to standard out
     ## and return 1, else return 0.  The input file must be under 50k.

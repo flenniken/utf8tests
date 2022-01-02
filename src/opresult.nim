@@ -34,7 +34,7 @@ type
         message*: T2
 
 func isMessage*(opResult: OpResult): bool =
-  ## Return true when the OpResult object contains a message id.
+  ## Return true when the OpResult object contains a message.
   if opResult.kind == orMessage:
     result = true
 

@@ -1,6 +1,6 @@
 ## Perl regular expression matching.
 
-# The notice below is there because this module includes the re module.
+# The notice below is here because this module includes the nim re module.
 #[
 Written by Philip Hazel
 Copyright (c) 1997-2005 University of Cambridge
@@ -55,39 +55,12 @@ type
     pattern*: string
     sub*: string
 
-func getGroup*(matches: Matches): string =
-  ## Get the first group in matches if it exists, else return "".
-  if matches.groups.len > 0:
-    result = matches.groups[0]
-
-func get2Groups*(matches: Matches): (string, string) =
-  ## Get the first two groups in matches. If one of the groups doesn't
-  ## exist, "" is returned for it.
-  var one: string
-  var two: string
-  if matches.groups.len > 0:
-    one = matches.groups[0]
-  if matches.groups.len > 1:
-    two = matches.groups[1]
-  result = (one, two)
-
-# todo: is there a good way to replace the get groups method with one?
-# todo: add optional parameter to specify regex flags.
-# todo: where is the perl online source?
-
-func get3Groups*(matches: Matches): (string, string, string) =
-  ## Get the first three groups in matches. If one of the groups doesn't
-  ## exist, "" is returned for it.
-  var one: string
-  var two: string
-  var three: string
-  if matches.groups.len > 0:
-    one = matches.groups[0]
-  if matches.groups.len > 1:
-    two = matches.groups[1]
-  if matches.groups.len > 2:
-    three = matches.groups[2]
-  result = (one, two, three)
+proc newMatches*(length: Natural, start: Natural, groups: varargs[string]): Matches =
+  ## Return a Matches object.
+  result.length = length
+  result.start = start
+  for group in groups:
+    result.groups.add(group)
 
 func getGroups*(matches: Matches, groupCount: Natural): seq[string] =
   ## Return the number of groups specified. If one of the groups doesn't
@@ -136,7 +109,8 @@ func compilePattern(pattern: string): Option[Regex] =
   except:
     result = none(Regex)
 
-proc matchPatternCached*(str: string, pattern: string, start: Natural = 0): Option[Matches] =
+proc matchPatternCached*(str: string, pattern: string,
+    start: Natural = 0): Option[Matches] =
   ## Match a pattern in a string and cache the compiled regular
   ## expression pattern.
 
@@ -153,7 +127,8 @@ proc matchPatternCached*(str: string, pattern: string, start: Natural = 0): Opti
     compliledPatterns[pattern] = regex
   result = matchRegex(str, regex, start)
 
-func matchPattern*(str: string, pattern: string, start: Natural = 0): Option[Matches] =
+func matchPattern*(str: string, pattern: string,
+    start: Natural = 0): Option[Matches] =
   ## Match a regular expression pattern in a string.
   let regexO = compilePattern(pattern)
   if not regexO.isSome:
@@ -175,4 +150,3 @@ proc replaceMany*(str: string, replacements: seq[Replacement]): Option[string] =
     let regex = regexO.get()
     subs.add((regex, r.sub))
   result = some(multiReplace(str, subs))
-

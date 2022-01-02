@@ -1,6 +1,6 @@
 # Utf8tests
 
-The utf8test.txt file in this project contains test cases UTF-8
+The utf8test.txt file in this project contains test cases for UTF-8
 decoders and validators.  You "compile" the file to generate the file
 utf8test.bin used for testing.
 
@@ -10,7 +10,7 @@ Important UTF-8 facts for testing:
 
 * Code points must be in the range U+0000 to U+10FFFF.
 * A UTF-8 code point is encoded with 1 to 4 bytes.
-* Unicode contains all the ASCII characters, 0 - 7f.
+* One byte UTF-8 characters are ASCII characters, 0 - 7f.
 * The surrogate characters are not valid in UTF-8.
 
 ## Bit Patterns

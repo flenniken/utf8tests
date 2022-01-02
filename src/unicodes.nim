@@ -1,8 +1,5 @@
 ## Functions that deal with Unicode.
 
-
-
-
 # copyright notice:
 
 # http://bjoern.hoehrmann.de/utf-8/decoder/dfa/
@@ -79,7 +76,7 @@ func validateUtf8String*(str: string): int =
 func sanitizeUtf8*(str: string, skipOrReplace: string = "replace"): string =
   ## Sanitize and return the UTF-8 string. The skipInvalid parameter
   ## determines whether to skip or replace invalid bytes.  When
-  ## replacing the U-FFFD character is used.
+  ## replacing the U+FFFD character is used.
 
   let skipInvalid = if skipOrReplace == "skip": true else: false
 
@@ -104,10 +101,6 @@ func sanitizeUtf8*(str: string, skipOrReplace: string = "replace"): string =
         # valid character.
         if not skipInvalid:
           result.add(replacementChar)
-        state = 0
-        inc(ixChar)
-        ix = ixChar
-        continue
       break # all done
 
     # Process the string byte.

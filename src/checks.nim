@@ -1,3 +1,6 @@
+## Check a file created from utf8tests.bin against the expected result
+## defined in utf8tests.txt.
+
 import std/options
 import std/strutils
 import std/os
@@ -13,23 +16,25 @@ const
 type
   WriteValidUtf8File* = proc (inFilename, outFilename: string,
     skipOrReplace = "replace"): int
+    ## Procedure prototype for sanitizing a UTF-8 file.
 
   TestLine* = object
-    ## TestLine holds the information from a test line.
-    valid*: bool  # valid type of line or invalid type.
-    numStr*: string  # test number
+    ## TestLine holds the information from a utf8test.txt test line.
+    valid*: bool  # valid line type or invalid line type.
+    numStr*: string  # test number string
     testCase*: string # test byte sequence
     eSkip*: string # expected byte sequence when skipping invalid bytes
     eReplace*: string # expected byte sequence when replacing invalid
                      # bytes with the replacement character.
 
-func newTestLine*(valid: bool, numStr, testCase: string, eSkip="", eReplace=""): TestLine =
+func newTestLine*(valid: bool, numStr, testCase: string,
+    eSkip="", eReplace=""): TestLine =
   ## Create a new TestLine object.
   result = TestLine(valid: valid, numStr: numStr, testCase: testCase,
                     eSkip: eSkip, eReplace: eReplace)
 
 func stringToHex*(str: string): string =
-  ## Convert the str bytes to hex bytes like 34 a9 ff e2.
+  ## Convert the string bytes to hex bytes like 34 a9 ff e2.
   var digits: seq[string]
   for ch in str:
     let abyte = uint8(ord(ch))
@@ -37,7 +42,10 @@ func stringToHex*(str: string): string =
   result = digits.join(" ")
 
 func hexToString*(hexString: string): OpResult[string, string] =
-  ## Convert the hexString to a string.
+  ## Convert the hex string to a string.
+  ##
+  ## Examples:
+  ##
   ## "33 34 35" -> "345"
   ## "333435" -> "345"
   ## " 33 3435" -> "345"
@@ -72,25 +80,30 @@ func hexToString*(hexString: string): OpResult[string, string] =
   result = newOpResult[string, string](str)
 
 func parseInvalidHexLine*(line: string): OpResult[TestLine, string] =
-  ## Parse invalid hex test line.
-  ## 22.3: invalid hex: e0 80 af: nothing : rep3
-  ## 13.0: invalid hex: c02031 : 20 31: rep 20 31
+  ## Parse invalid hex type test line.
+  ##
+  ## Examples:
+  ##
+  ## 22.3:invalid hex:e0 80 af:nothing:EFBFBD EFBFBD EFBFBD
 
+  # Validate and extract the information from the line.
   let pattern = r"([0-9.]+)\s*:\s*invalid hex\s*:\s*([0-9a-f A-F]+)\s*:\s*([^:]+)\s*:\s*(.+)$"
   let matchesO = matchPattern(line, pattern)
   if not matchesO.isSome:
-    return newOpResultMsg[TestLine, string]("Not a valid 'invalid hex' line.")
+    return newOpResultMsg[TestLine, string]("Not a valid 'invalid hex' type line.")
   let groups = getGroups(matchesO.get, 4)
   let numStr = groups[0]
   let testCaseHex = groups[1]
   let eSkipHex = strutils.strip(groups[2])
   let eReplaceHex = strutils.strip(groups[3])
 
+  # Convert the test case hex string to a string.
   let testCaseOr = hexToString(testCaseHex)
   if testCaseOr.isMessage:
     return newOpResultMsg[TestLine, string](testCaseOr.message)
   let testCase = testCaseOr.value
 
+  # Convert the expected skip hex string to a string.
   var eSkip: string
   if eSkipHex == "nothing":
     eSkip = ""
@@ -100,23 +113,28 @@ func parseInvalidHexLine*(line: string): OpResult[TestLine, string] =
       return newOpResultMsg[TestLine, string](eSkipOr.message)
     eSkip = eSkipOr.value
 
+  # Convert the expected replace hex string to a string.
   let eReplaceOr = hexToString(eReplaceHex)
   if eReplaceOr.isMessage:
     return newOpResultMsg[TestLine, string](eReplaceOr.message)
   let eReplace = eReplaceOr.value
 
-  return newOpResult[TestLine, string](newTestLine(false, numStr, testCase, eSkip, eReplace))
+  return newOpResult[TestLine, string](
+    newTestLine(false, numStr, testCase, eSkip, eReplace))
 
 func parseValidHexLine*(line: string): OpResult[TestLine, string] =
   ## Parse valid hex type test line.
 
-  # example: 10.3: valid hex: F4 8F BF BF
+  # Example:
+  # 10.3:valid hex:F4 8F BF BF
 
   let pattern = r"([0-9.]+)\s*:\s*valid hex\s*:\s*(.+)$"
   let matchesO = matchPattern(line, pattern)
   if not matchesO.isSome:
     return newOpResultMsg[TestLine, string]("Invalid 'valid hex' line format.")
-  let (numStr, hexString) = matchesO.get().get2Groups()
+  let groups = matchesO.get().getGroups(2)
+  let numStr = groups[0]
+  let hexString = groups[1]
   let testCaseOr = hexToString(hexString)
   if testCaseOr.isMessage:
     return newOpResultMsg[TestLine, string](testCaseOr.message)
@@ -125,25 +143,31 @@ func parseValidHexLine*(line: string): OpResult[TestLine, string] =
 func parseInvalidLine*(line: string): OpResult[TestLine, string] =
   ## Parse invalid hex type test line.
 
-  # example: 10.3:invalid:\xff\xfe
-  # example: 10.3:invalid:
+  # Example:
+  # 10.3:invalid:\xff\xfe
 
   let pattern = r"([0-9.]+):invalid:(.*)$"
   let matchesO = matchPattern(line, pattern)
   if not matchesO.isSome:
     return newOpResultMsg[TestLine, string]("Invalid 'invalid' line format.")
-  let (numStr, testCase) = matchesO.get().get2Groups()
+  let groups = matchesO.get().getGroups(2)
+  let numStr = groups[0]
+  let testCase = groups[1]
   return newOpResult[TestLine, string](newTestLine(true, numStr, testCase, "", ""))
 
 func parseValidLine*(line: string): OpResult[TestLine, string] =
   ## Parse valid type test line.
-  # example: 10.3:valid:abc
+
+  # Example:
+  # 10.3:valid:abc
 
   let pattern = r"([0-9.]+):valid:(.+)$"
   let matchesO = matchPattern(line, pattern)
   if not matchesO.isSome:
     return newOpResultMsg[TestLine, string]("Invalid 'valid' line format.")
-  let (numStr, testCase) = matchesO.get().get2Groups()
+  let groups = matchesO.get().getGroups(2)
+  let numStr = groups[0]
+  let testCase = groups[1]
   return newOpResult[TestLine, string](newTestLine(true, numStr, testCase, "", ""))
 
 func parseTestLine*(line: string): OpResult[TestLine, string] =
@@ -247,7 +271,7 @@ proc createUtf8testsBinFile*(resultFilename: string): string =
 proc compareTablesEcho(eTable: OrderedTable[string, TestLine],
     gotTable: OrderedTable[string, TestLine],
     skipOrReplace="replace"): int =
-  ## Compare to tables and show the differences. Return 0 when they
+  ## Compare two tables and show the differences. Return 0 when they
   ## are the same.
 
   if eTable.len != gotTable.len:
@@ -258,7 +282,7 @@ proc compareTablesEcho(eTable: OrderedTable[string, TestLine],
 
   for eNumStr, eTestLine in pairs(eTable):
     if not gotTable.hasKey(eNumStr):
-      echo fmt"test number '{eNumStr}' does not exist in the generated table."
+      echo fmt"Test number '{eNumStr}' does not exist in the generated table."
       result = 1
       continue
     let gotTestLine = gotTable[eNumStr]
@@ -285,7 +309,6 @@ proc compareTablesEcho(eTable: OrderedTable[string, TestLine],
       echo ""
       result = 1
 
-
 proc checkFile*(expectedFilename: string, gotFilename: string,
     skipOrReplace = "replace", readIgnore = false): int =
   ## Check the file for differences with the expected output. Echo
@@ -293,12 +316,14 @@ proc checkFile*(expectedFilename: string, gotFilename: string,
   ## expected output. When readIgnore is true, ignore malformed lines
   ## when reading the got file.
 
+  # Read the got file into a dictionary.
   let gotTableOr = readTestCasesFile(gotFilename, readIgnore)
   if gotTableOr.isMessage:
     echo gotTableOr.message
     return 1
   let gotTable = gotTableOr.value
 
+  # Read the test case file into a dictionary.
   let eTableOr = readTestCasesFile(testCases)
   if eTableOr.isMessage:
     echo eTableOr.message
@@ -309,4 +334,3 @@ proc checkFile*(expectedFilename: string, gotFilename: string,
   let rc = compareTablesEcho(eTable, gotTable, skipOrReplace)
   if rc != 0:
     result = 1
-
