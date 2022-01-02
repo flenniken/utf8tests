@@ -203,9 +203,9 @@ proc readTestCasesFile*(filename: string):
     if testLineOr.isMessage:
       # This is a warning. Later, when the tables are compared, the
       # missing tests will be noted.
-      echo newOpResultMessage("Line $1: $2" % [$lineNum, testLineOr.message])
-      # return newOpResultMessage("Line $1: $2" % [$lineNum, testLineOr.message])
-      continue
+      # echo newOpResultMessage("Line $1: $2" % [$lineNum, testLineOr.message])
+      # continue
+      return newOpResultMessage("Line $1: $2" % [$lineNum, testLineOr.message])
     let testLine = testLineOr.value
 
     # Add the test line to the dictionary.

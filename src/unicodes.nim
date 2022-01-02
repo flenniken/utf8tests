@@ -113,23 +113,22 @@ func sanitizeUtf8*(str: string, skipOrReplace: string = "replace"): string =
     # Process the string byte.
     let sByte = str[ix]
     decode(state, codePoint, sByte)
-    # echo "state = " & $state
+
+    # Handle an invalid byte sequence.
+    if state == 12:
+      if not skipInvalid:
+        result.add(replacementChar)
+      # Restart at the byte that broke a multi-byte sequence.
+      state = 0
+      if ix - ixChar == 0:
+        inc(ix)
+      ixChar = ix
+      continue
 
     # Add the valid character to the result string.
     if state == 0:
       result.add(str[ixChar .. ix])
       ixChar = ix + 1
-
-    # Handle an invalid byte sequence.
-    elif state == 12:
-      if not skipInvalid:
-        result.add(replacementChar)
-      # Reset the state machine at the next byte after where the
-      # character started.
-      state = 0
-      ix = ixChar
-      inc(ixChar)
-
     inc(ix)
 
 func utf8CharString*(str: string, pos: Natural): string =

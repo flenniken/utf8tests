@@ -88,5 +88,6 @@ suite "unicodes.nim":
     # This test shows how restarting works after an invalid multi-byte
     # sequence when replacing.
     check testSanitizeutf8("\xf4\x31", "\xef\xbf\xbd\x31", "replace")
-    check testSanitizeutf8("\xf4\x80\x31", "\xef\xbf\xbd\xef\xbf\xbd\x31", "replace")
-    check testSanitizeutf8("\xf0\x90\x80\x31", "\xef\xbf\xbd\xef\xbf\xbd\xef\xbf\xbd\x31", "replace")
+    check testSanitizeutf8("\xf4\x80\x31", "\xef\xbf\xbd\x31", "replace")
+    check testSanitizeutf8("\xf0\x90\x80\x31", "\xef\xbf\xbd\x31", "replace")
+    check testSanitizeutf8("\xf1\x80\x80\xff", "\xef\xbf\xbd\xef\xbf\xbd", "replace")

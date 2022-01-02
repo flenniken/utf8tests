@@ -11,13 +11,9 @@ proc generateArtifacts(name: string, writeProc: WriteValidUtf8File): int =
   for ix in [0, 1]:
     let skipOrReplace = options[ix]
     let filename = "artifacts/utf8.$1.$2.txt" % [skipOrReplace, name]
-    if not fileExists(filename) or fileNewer(binTestCases, filename):
-      echo "generating file: " & filename
-      let rc = writeProc(binTestCases, filename, skipOrReplace)
-      if rc != 0:
-        result = rc
-
-
+    let rc = writeProc(binTestCases, filename, skipOrReplace)
+    if rc != 0:
+      result = rc
 
 suite "writevalidutf8file.nim":
 
@@ -35,6 +31,7 @@ suite "writevalidutf8file.nim":
     check sanitizeUtf8Nim("", "replace") == ""
 
   test "generate utf8tests.bin":
+    # Re-generate the utf8tests.bin file when the utf8tests.txt file changes.
     if not fileExists(binTestCases) or fileNewer(testCases, binTestCases):
       echo "generating file: " & binTestCases
       let msg = createUtf8testsBinFile(binTestCases)

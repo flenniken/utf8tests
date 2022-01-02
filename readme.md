@@ -4,66 +4,16 @@ The file utf8test.txt contains test cases for testing UTF-8
 decoders and validators.  You "compile" the file to generate
 the file utf8test.bin used for testing.
 
-## About the File Format 
-
-This file is line oriented. Blank lines or lines that start
-with a # are comments that are skipped.
-
-The other lines test valid UTF-8 byte sequences or invalid byte
-sequences.  A test line starts with a unique number.
-
-For the valid test cases you specify the test case text. The
-test code checks that the output matches the text case. You can
-specify the test case as normal text or using hex. Examples:
-
-1.9.3:valid:this is test text
-1.9.6: valid hex: 45 6a 31
-
-The replacment character is U+FFFD <EFBFBD>.
-
-For the invalid test cases you specify the test case and the expected
-output in two forms, one when skipping invalid bytes and one when
-replacing invalid bytes. The comment lines before the test line tell
-what you are testing.
-
-Examples:
-
-~~~
-# Too big U+001FFFFF, <F7 BF BF BF>
-6.0: invalid: F7 BF BF BF : nothing : EFBFBD EFBFBD EFBFBD EFBFBD
-~~~
-
-When the output does not match the expected values you will see
-messages similar to this:
-
-~~~
-6.0: invalid: F7 BF BF BF
-6.0:   skip expected: nothing
-6.0:   skip      got: F7 BF BF BF
-6.0:   replace expected: EFBFBD  EFBFBD  EFBFBD  EFBFBD
-6.0:   replace      got: F7 BF BF BF
-~~~
-
-Line types:
-
-* # <comment line>
-* <blank line>
-* num:valid:string
-* num:valid hex:hexString
-* num:invalid:hexString:hexString2:hexString3
-
-* hexString2 is the expected value when skipping invalid bytes.
-* hexString2 is the expected value when replacing invalid bytes with U+FFFD <EFBFBD>.
-
-## UTF-8 Axioms and General Information
+## UTF-8 General Information
 
 The following UTF-8 facts are important for testing:
 
-* Code points must be in the range U+0000 to U+10FFFF (1,114,111).
+* Code points must be in the range U+0000 to U+10FFFF.
 * A UTF-8 code point is encoded with 1 to 4 bytes.
-* The first UTF-8 characters are ascii, 0 - 7f.
+* Unicode contains all the ASCII characters, 0 - 7f.
+* The surrogate characters are not valid in UTF-8.
 
-Bit patterns for 1 - 4 byte UTF-8 code points:
+Bit patterns for 1 to 4 byte UTF-8 code point sequences:
 
 ~~~
 0xxxxxxx
@@ -72,9 +22,32 @@ Bit patterns for 1 - 4 byte UTF-8 code points:
 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
 ~~~
 
-It's common practice to replace invalid bytes with U+FFFD. You
-replace the first invalid byte then restart at the next byte
-and repeat if necessary.
+# Invalid Byte Sequences
+
+Some byte sequences are invalid. It's common practice to replace
+invalid bytes sequences with with the Unicode replacement character
+U+FFFD, <EF BF BD>.
+
+pg 126, section 3.9
+
+"U+FFFD Substitution of Maximal Subparts"
+
+An increasing number of implementations are adopting the handling of
+ill-formed subsequences as specified in the W3C standard for
+encoding to achieve consistent U+FFFD replacements. See:
+
+http://www.w3.org/TR/encoding/
+
+Although the Unicode Standard does not require this practice for
+conformance, the following text describes this practice and gives
+detailed examples.
+
+This definition of the maximal subpart is used in describing how far
+to advance processing when making substitutions: always process at
+least one code unit, or as many code units as match the beginning of a
+well-formed character, up to the point where the next code unit would
+make it ill-formed, that is, an offset is reached that does not
+continue this partial character.
 
 Binary to hex table:
 
@@ -96,6 +69,8 @@ Binary to hex table:
 1110 e
 1111 f
 ~~~
+
+# Other UTF-8 Information
 
 Wikipedia has a good explaination of UTF-8:
 https://en.wikipedia.org/wiki/UTF-8
