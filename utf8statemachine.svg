@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="797.52344"
+   height="745.26825"
+   version="1.1"
+   id="svg463"
+   sodipodi:docname="utf8statemachine.svg"
+   inkscape:version="1.1.1 (c3084ef, 2021-09-22)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs467" />
+  <sodipodi:namedview
+     id="namedview465"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     fit-margin-top="5"
+     fit-margin-left="5"
+     fit-margin-right="5"
+     fit-margin-bottom="5"
+     inkscape:zoom="0.5"
+     inkscape:cx="689"
+     inkscape:cy="367"
+     inkscape:window-width="1152"
+     inkscape:window-height="623"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg463" />
+  <text
+     x="20.523094"
+     y="29.996094"
+     font-family="'Times New Roman'"
+     font-size="36px"
+     id="textMachine">UTF-8 Finite State Machine</text>
+  <text
+     x="20.523094"
+     y="49.996094"
+     font-family="'Times New Roman'"
+     font-size="12px"
+     id="textTimeStamp">Updated: Tue Dec 21 17:53:53 UTC 2021</text>
+  <circle
+     stroke="#008000"
+     stroke-width="1"
+     fill="none"
+     cx="89.023438"
+     cy="368.99481"
+     id="circle279"
+     r="30" />
+  <text
+     x="84.023438"
+     y="374.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text281">0</text>
+  <circle
+     stroke="#008000"
+     stroke-width="1"
+     fill="none"
+     cx="89.023438"
+     cy="368.99481"
+     id="circle283"
+     r="24" />
+  <circle
+     stroke="#ff0000"
+     stroke-width="1"
+     fill="none"
+     cx="391.02344"
+     cy="376.99481"
+     id="circle285"
+     r="30" />
+  <text
+     x="386.02344"
+     y="382.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text287">1</text>
+  <circle
+     stroke="#ff0000"
+     stroke-width="1"
+     fill="none"
+     cx="391.02344"
+     cy="376.99481"
+     id="circle289"
+     r="24" />
+  <circle
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     cx="762.02344"
+     cy="398.99481"
+     id="circle291"
+     r="30" />
+  <text
+     x="757.02344"
+     y="404.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text293">2</text>
+  <circle
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     cx="397.02344"
+     cy="174.99481"
+     id="circle295"
+     r="30" />
+  <text
+     x="392.02344"
+     y="180.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text297">8</text>
+  <circle
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     cx="315.02344"
+     cy="249.99481"
+     id="circle299"
+     r="30" />
+  <text
+     x="310.02344"
+     y="255.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text301">7</text>
+  <circle
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     cx="315.02344"
+     cy="512.99481"
+     id="circle303"
+     r="30" />
+  <text
+     x="310.02344"
+     y="518.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text305">6</text>
+  <circle
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     cx="463.02344"
+     cy="592.99481"
+     id="circle307"
+     r="30" />
+  <text
+     x="458.02344"
+     y="598.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text309">4</text>
+  <circle
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     cx="391.02344"
+     cy="658.99481"
+     id="circle311"
+     r="30" />
+  <text
+     x="386.02344"
+     y="664.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text313">5</text>
+  <circle
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     cx="636.02344"
+     cy="290.99481"
+     id="circle315"
+     r="30" />
+  <text
+     x="631.02344"
+     y="296.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text317">3</text>
+  <path
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     d="m 100.74943,341.39481 a 297.887,297.887 0 0 1 266.31701,-167.744"
+     id="path319" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="370.543,34.156 362.515,29.2 362.57,39.2 "
+     id="polygon321"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="235.02344"
+     y="193.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text323">f4</text>
+  <path
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     d="m 108.28643,346.01181 a 300.831,300.831 0 0 1 176.88801,-93.14"
+     id="path325" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="288.651,113.377 280.009,109.594 281.463,119.488 "
+     id="polygon327"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="184.02344"
+     y="267.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text329">f1-f3</text>
+  <path
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     d="M 286.91544,502.51881 A 571.151,571.151 0 0 1 110.39343,390.04481"
+     id="path331" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="290.392,363.024 284.841,355.396 281.103,364.672 "
+     id="polygon333"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="208.02344"
+     y="487.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text335">f0</text>
+  <path
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     d="M 433.05544,594.19881 A 375.274,375.274 0 0 1 102.10643,395.98281"
+     id="path337" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="436.532,454.704 428.531,449.706 428.533,459.706 "
+     id="polygon339"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="261.02344"
+     y="575.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text341">e0</text>
+  <path
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     d="m 62.433438,355.35881 a 22.5,22.5 0 1 1 21.239,-15.764"
+     id="path343" />
+  <text
+     x="14.98489"
+     y="301.72012"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text345">00-7f</text>
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="87.149,200.1 92.068,192.05 82.068,192.151 "
+     id="polygon347"
+     transform="translate(-3.4765621,139.49481)" />
+  <path
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     d="m 426.99444,174.14481 a 259.187,259.187 0 0 1 191.154,92.778"
+     id="path349" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="621.625,127.428 620.327,118.083 612.657,124.499 "
+     id="polygon351"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="457.02344"
+     y="174.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text353">80-8f</text>
+  <path
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     d="m 663.15244,303.76281 a 258.509,258.509 0 0 1 82.104,70.375"
+     id="path355" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="748.733,234.643 747.858,225.25 739.906,231.313 "
+     id="polygon357"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="675.02344"
+     y="306.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text359">80-bf</text>
+  <path
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     d="M 759.46944,428.87581 A 336.837,336.837 0 0 1 88.909438,398.98481"
+     id="path361" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="92.386,259.49 87.715,267.687 97.707,267.28 "
+     id="polygon363"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="388.02344"
+     y="739.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text365">80-bf</text>
+  <path
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     d="m 745.97944,424.33581 a 394.407,394.407 0 0 1 -253.277,164.333"
+     id="path367" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="749.456,284.841 740.802,288.599 749.042,294.265 "
+     id="polygon369"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="590.02344"
+     y="570.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text371">a0-bf</text>
+  <path
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     d="m 753.10344,427.62881 a 351.528,351.528 0 0 1 -332.121,232.753"
+     id="path373" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="756.58,288.134 749.171,293.974 758.583,297.353 "
+     id="polygon375"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="559.02344"
+     y="647.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text377">80-9f</text>
+  <path
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     d="M 361.65944,652.88781 A 370.444,370.444 0 0 1 96.314434,398.08681"
+     id="path379" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="365.136,513.393 358.592,506.599 356.161,516.299 "
+     id="polygon381"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="212.02344"
+     y="605.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text383">ed</text>
+  <path
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     d="m 344.78144,246.21781 a 587.926,587.926 0 0 1 263.389,33.641"
+     id="path385" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="611.647,140.364 605.882,132.896 602.408,142.273 "
+     id="polygon387"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="458.02344"
+     y="242.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text389">80-bf</text>
+  <path
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     d="m 633.25644,320.84781 a 242.503,242.503 0 0 1 -289.325,200.094"
+     id="path391" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="636.733,181.353 630.564,188.49 640.445,190.026 "
+     id="polygon393"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="544.02344"
+     y="490.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text395">90-bf</text>
+  <path
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     d="m 93.204438,339.29781 a 337.27,337.27 0 0 1 667.297002,29.746"
+     id="path397" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="763.978,229.549 768.194,221.109 758.239,222.06 "
+     id="polygon399"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="459.02344"
+     y="62.994812"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text401">c2-df</text>
+  <polygon
+     stroke="#000000"
+     stroke-width="1"
+     points="364.511,236.706 122.489,230.294 "
+     id="polygon403"
+     transform="translate(-3.4765621,139.49481)" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="364.511,236.706 356.646,231.495 356.381,241.492 "
+     id="polygon405"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="186.02344"
+     y="394.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text407">80-c1, f5-ff</text>
+  <polygon
+     stroke="#000000"
+     stroke-width="1"
+     points="394.5,267.5 394.5,489.5 "
+     id="polygon409"
+     transform="translate(-3.4765621,139.49481)" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="394.5,267.5 389.5,275.5 399.5,275.5 "
+     id="polygon411"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="380.02344"
+     y="476.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text413">c</text>
+  <polygon
+     stroke="#000000"
+     stroke-width="1"
+     points="403.987,265.96 457.013,425.04 "
+     id="polygon415"
+     transform="translate(-3.4765621,139.49481)" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="403.987,265.96 401.773,275.131 411.26,271.969 "
+     id="polygon417"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="432.02344"
+     y="492.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text419">b</text>
+  <polygon
+     stroke="#000000"
+     stroke-width="1"
+     points="379.865,263.688 333.135,347.312 "
+     id="polygon421"
+     transform="translate(-3.4765621,139.49481)" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="379.865,263.688 371.598,268.233 380.328,273.111 "
+     id="polygon423"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="341.02344"
+     y="440.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text425">d</text>
+  <polygon
+     stroke="#000000"
+     stroke-width="1"
+     points="379.095,211.757 333.905,136.243 "
+     id="polygon427"
+     transform="translate(-3.4765621,139.49481)" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="379.095,211.757 379.277,202.325 370.696,207.46 "
+     id="polygon429"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="339.02344"
+     y="315.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text431">a</text>
+  <polygon
+     stroke="#000000"
+     stroke-width="1"
+     points="395.391,207.513 399.609,65.487 "
+     id="polygon433"
+     transform="translate(-3.4765621,139.49481)" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="395.391,207.513 400.626,199.665 390.63,199.368 "
+     id="polygon435"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="395.02344"
+     y="287.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text437">e</text>
+  <polygon
+     stroke="#000000"
+     stroke-width="1"
+     points="422.807,227.564 611.193,161.436 "
+     id="polygon439"
+     transform="translate(-3.4765621,139.49481)" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="422.807,227.564 432.011,229.632 428.699,220.196 "
+     id="polygon441"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="500.02344"
+     y="330.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text443">a</text>
+  <polygon
+     stroke="#000000"
+     stroke-width="1"
+     points="424.447,239.276 735.553,257.724 "
+     id="polygon445"
+     transform="translate(-3.4765621,139.49481)" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="424.447,239.276 432.137,244.741 432.729,234.758 "
+     id="polygon447"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="508.02344"
+     y="397.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text449">a</text>
+  <polygon
+     stroke="#000000"
+     stroke-width="1"
+     points="69.327,248.553 47.5,266.5 "
+     id="polygon451"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="4.0234375"
+     y="425.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text453">start</text>
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="69.327,248.553 59.972,249.772 66.323,257.496 "
+     id="polygon455"
+     transform="translate(-3.4765621,139.49481)" />
+  <path
+     stroke="#000000"
+     stroke-width="1"
+     fill="none"
+     d="m 92.691438,339.23381 a 282.543,282.543 0 0 1 531.492002,-75.788"
+     id="path457" />
+  <polygon
+     fill="#000000"
+     stroke-width="1"
+     points="627.66,123.951 628.598,114.563 619.633,118.994 "
+     id="polygon459"
+     transform="translate(-3.4765621,139.49481)" />
+  <text
+     x="350.3801"
+     y="102.99481"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text461">e1-ec, ee-ef</text>
+  <text
+     x="21.301094"
+     y="610.21912"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text97668">a) 00-7f, c0-ff</text>
+  <text
+     x="21.301094"
+     y="635.21912"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text97670">b) 00-9f, c0-ff</text>
+  <text
+     x="21.301094"
+     y="660.21912"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text97674">c) 00-7f, a0-ff</text>
+  <text
+     x="21.301094"
+     y="685.21912"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text97678">d) 00-8f, c0-ff</text>
+  <text
+     x="21.301094"
+     y="710.21912"
+     font-family="'Times New Roman'"
+     font-size="20px"
+     id="text97682">e) 00-7f, 90-ff</text>
+</svg>
