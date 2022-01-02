@@ -51,6 +51,30 @@ proc writeValidUtf8Ref*(inFilename: string, outFilename: string,
 
   result = 0 # success
 
+proc writeFileUsingWriter*(cmd: string, inFilename: string,
+    outFilename: string, skipOrReplace = "replace"): int =
+  ## Read the binary input file which might contain invalid
+  ## UTF-8 bytes, then write valid UTF-8 bytes to the output file
+  ## either skipping the invalid bytes or replacing them with U+FFFD.
+  ##
+  ## When there is an error, display the error message to standard out
+  ## and return 1, else return 0.  The input file must be under 50k.
+
+  # Check the file exists and is small.
+  if fileExistsAnd50kEcho(inFilename) != 0:
+    return 1
+
+  discard tryRemoveFile(outFilename)
+
+  let fullCmd = cmd % [inFilename, outFilename, skipOrReplace]
+  discard execCmd(fullCmd)
+
+  if not fileExists(outFilename) or getFileSize(outFilename) == 0:
+    echo "The output file wasn't created."
+    result = 1
+  else:
+    result = 0
+
 proc sanitizeUtf8Nim*(str: string, skipOrReplace = "replace"): string =
   ## Sanitize and return the UTF-8 string. The skipOrReplace parameter
   ## determines whether to skip or replace invalid bytes.  When
@@ -109,71 +133,22 @@ proc writeValidUtf8FileNim*(inFilename: string, outFilename: string,
 
 proc writeValidUtf8FileIconv*(inFilename: string, outFilename: string,
     skipOrReplace = "replace"): int =
-  ## Read the binary file input file, which might contain invalid
-  ## UTF-8 bytes, then write valid UTF-8 bytes to the output file
-  ## either skipping the invalid bytes or replacing them with U+FFFD.
-  ##
-  ## When there is an error, display the error message to standard out
-  ## and return 1, else return 0.  The input file must be under 50k.
-
-  ## This is the version of iconv and how to get the version number:
-  ## iconv --version | head -1
-  ## iconv (GNU libiconv 1.11)
-
-  if fileExistsAnd50kEcho(inFilename) != 0:
+  if skipOrReplace == "replace":
+    echo "Replace not supported"
     return 1
-
-  discard tryRemoveFile(outFilename)
-
-  # Run iconv on the input file to generate the output file.
-  var option: string
-  if skipOrReplace == "skip":
-    option = "-c"
-  else:
-    # option = "--byte-subst='(%x!)'"
-    option = "--byte-subst='\xEF\xBF\xBD'"
-
-  discard execCmd("iconv $1 -f UTF-8 -t UTF-8 $2 >$3 2>/dev/null" % [
-    option, inFilename, outFilename])
-  if not fileExists(outFilename) or getFileSize(outFilename) == 0:
-    echo "Iconv did not generate a result file."
-    result = 1
-  else:
-    result = 0
+  let cmd = "iconv -c -f UTF-8 -t UTF-8 $1 >$2 2>/dev/null"
+  return writeFileUsingWriter(cmd, inFilename, outFilename, skipOrReplace)
 
 proc writeValidUtf8FilePython3*(inFilename: string, outFilename: string,
     skipOrReplace = "replace"): int =
-
-  discard tryRemoveFile(outFilename)
-
-  # Run a python 3 script on the input file to generate the output
-  # file.
-  let cmd = "python3 writers/writeValidUtf8.py $1 $2 $3" % [
-    inFilename, outFilename, skipOrReplace]
-  discard execCmd(cmd)
-
-  if not fileExists(outFilename) or getFileSize(outFilename) == 0:
-    echo "Python did not generate a result file."
-    result = 1
-  else:
-    result = 0
+  let cmd = "python3 writers/writeValidUtf8.py $1 $2 $3"
+  return writeFileUsingWriter(cmd, inFilename, outFilename, skipOrReplace)
 
 proc writeValidUtf8FileNodeJs*(inFilename: string, outFilename: string,
                            skipOrReplace = "replace"): int =
-
-  ## This is the version of node.js and how to get the version number:
-  ## node -v
-  ## v17.2.0
-
-  if fileExistsAnd50kEcho(inFilename) != 0:
+  if skipOrReplace == "skip":
+    echo "Skip not supported"
     return 1
 
-  discard tryRemoveFile(outFilename)
-
-  # Run node js on the input file to generate the output file.
   let cmd = "node writers/writeValidUtf8.js $1 $2 $3"
-  discard execCmd(cmd % [inFilename, outFilename, skipOrReplace])
-
-  if not fileExists(outFilename) or getFileSize(outFilename) == 0:
-    echo "writeValidUtf8.js did not generate a result file."
-    result = 1
+  return writeFileUsingWriter(cmd, inFilename, outFilename, skipOrReplace)

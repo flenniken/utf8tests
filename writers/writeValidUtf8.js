@@ -9,7 +9,7 @@ function writeValidUtf8(inFilename, outFilename, skipOrReplace) {
   // When there is an error, display the error message to standard out
   // and return 1, else return 0.  The input file must be under 50k.
 
-  # Skip is not supported.
+  // Skip is not supported.
 
   const fs = require('fs')
 
