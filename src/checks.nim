@@ -172,11 +172,12 @@ func newOpResultMessage(message: string):
     OpResult[OrderedTable[string, TestLine], string] {.inline.} =
   result = newOpResultMsg[OrderedTable[string, TestLine], string](message)
 
-proc readTestCasesFile*(filename: string):
+proc readTestCasesFile*(filename: string, readIgnore = false):
     OpResult[OrderedTable[string, TestLine], string] =
   ## Read the test cases file. Return an ordered dictionary where
   ## the key is the test number string and the value is a TestLine
   ## object. When there is an error, return the error message.
+  ## Set readIgnore true to ignore bad lines.
 
   if not fileExists(filename):
     return newOpResultMessage("The file does not exist: " & filename)
@@ -201,10 +202,8 @@ proc readTestCasesFile*(filename: string):
     # Parse a test line.
     let testLineOr = parseTestLine(line)
     if testLineOr.isMessage:
-      # This is a warning. Later, when the tables are compared, the
-      # missing tests will be noted.
-      # echo newOpResultMessage("Line $1: $2" % [$lineNum, testLineOr.message])
-      # continue
+      if readIgnore:
+        continue
       return newOpResultMessage("Line $1: $2" % [$lineNum, testLineOr.message])
     let testLine = testLineOr.value
 
@@ -288,12 +287,13 @@ proc compareTablesEcho(eTable: OrderedTable[string, TestLine],
 
 
 proc checkFile*(expectedFilename: string, gotFilename: string,
-                skipOrReplace = "replace"): int =
+    skipOrReplace = "replace", readIgnore = false): int =
   ## Check the file for differences with the expected output. Echo
   ## differences to the screen. Return 0 when the output matches the
-  ## expected output.
+  ## expected output. When readIgnore is true, ignore malformed lines
+  ## when reading the got file.
 
-  let gotTableOr = readTestCasesFile(gotFilename)
+  let gotTableOr = readTestCasesFile(gotFilename, readIgnore)
   if gotTableOr.isMessage:
     echo gotTableOr.message
     return 1

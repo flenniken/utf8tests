@@ -1,8 +1,15 @@
 import std/unittest
 import std/os
 import std/strformat
+import std/tables
 import opresult
 import checks
+
+proc createFile(filename: string, content: string) =
+  ## Create a file with the given content.
+  var file = open(filename, fmWrite)
+  file.write(content)
+  file.close()
 
 proc compareTestLineEcho*(testLine: TestLine, eTestLine: TestLine): bool =
   ## Compare to TestLine objects and show the differences. Return true
@@ -168,6 +175,14 @@ suite "checks.nim":
     check testParseInvalidLine("1.2:invalid:abc", newTestLine(false, "1.2", "abc"))
     check testParseInvalidLine("1.2:invalid:", newTestLine(false, "1.2", ""))
 
+  test "parseInvalidLine":
+    check testParseInvalidLine("19.0:invalid:\xdf",
+      newTestLine(false, "19.0", "\xdf"))
+
+    check testParseInvalidLine("19.1:invalid:\xef\xbf",
+      newTestLine(false, "19.1", "\xef\xbf"))
+
+
   test "parseTestLine":
     check testParseTestLine("1:valid:abc", newTestLine(true, "1", "abc"))
     check testParseTestLine("2: valid hex: 39", newTestLine(true, "2", "9"))
@@ -185,6 +200,46 @@ suite "checks.nim":
     check testParseTestLineError("1: invalid : 31: 32: 33")
     check testParseTestLineError("1: inalid : 31: 32: 33")
     check testParseTestLineError("abc: invalid : 31: 32: 33")
+
+
+  test "readTestCasesFile 19.1":
+    let filename = "temp19.1.txt"
+    # Content fragment from firefox file.
+    let content = """
+18.4:invalid:\xfc\x80\x80\x80
+19.0:invalid:\xdf
+19.1:invalid:\xef\xbf
+19.2:invalid:\xf7\xbf\xbf
+19.3:invalid:\xfb\xbf\xbf\xbf
+"""
+    createFile(filename, content)
+
+    let tableOr = readTestCasesFile(filename)
+    if tableOr.isMessage:
+      echo "Unable to read the file."
+      echo tableOr.message
+    check tableOr.isValue()
+    discard tryRemoveFile(filename)
+
+  test "readTestCasesFile firefox":
+    let gotFilename = "artifacts/utf8.replace.firefox.95.0.2.txt"
+    let tableOr = readTestCasesFile(gotFilename)
+    if tableOr.isMessage:
+      echo "Unable to read the file."
+      echo tableOr.message
+    check tableOr.isValue()
+
+  test "readTestCasesFile firefox":
+    let gotFilename = "artifacts/utf8.replace.safari.14.1.2.txt"
+    let tableOr = readTestCasesFile(gotFilename)
+    if tableOr.isMessage:
+      echo "Unable to read the file."
+      echo tableOr.message
+    check tableOr.isValue()
+    let table = tableOr.value
+    check table.hasKey("19.1")
+
+
 
   test "readTestCasesFile testCases":
     let tableOr = readTestCasesFile(testCases)
@@ -239,3 +294,38 @@ suite "checks.nim":
     let gotFilename = "artifacts/utf8.replace.ref.txt"
     let rc = checkFile(binTestCases, gotFilename, "replace")
     check rc == 0
+
+  test "python3 check skip":
+    let gotFilename = "artifacts/utf8.skip.python.3.7.5.txt"
+    let rc = checkFile(binTestCases, gotFilename, "skip")
+    check rc == 0
+
+  test "python3 check replace":
+    let gotFilename = "artifacts/utf8.replace.python.3.7.5.txt"
+    let rc = checkFile(binTestCases, gotFilename, "replace")
+    check rc == 0
+
+  # test "nim check skip":
+  #   let gotFilename = "artifacts/utf8.skip.nim.1.4.8.txt"
+  #   let rc = checkFile(binTestCases, gotFilename, "skip")
+  #   check rc == 0
+
+  # test "nim check replace":
+  #   let gotFilename = "artifacts/utf8.replace.nim.1.4.8.txt"
+  #   let rc = checkFile(binTestCases, gotFilename, "replace")
+  #   check rc == 0
+
+  # test "chrome check replace":
+  #   let gotFilename = "artifacts/utf8.replace.chrome.96.0.4664.110.txt"
+  #   let rc = checkFile(binTestCases, gotFilename, "replace", true)
+  #   check rc == 0
+
+  # test "firefox check replace":
+  #   let gotFilename = "artifacts/utf8.replace.firefox.95.0.2.txt"
+  #   let rc = checkFile(binTestCases, gotFilename, "replace", false)
+  #   check rc == 0
+
+  # test "safari check replace":
+  #   let gotFilename = "artifacts/utf8.replace.safari.14.1.2.txt"
+  #   let rc = checkFile(binTestCases, gotFilename, "replace", false)
+  #   check rc == 0
