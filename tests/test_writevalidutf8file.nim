@@ -4,12 +4,14 @@ import std/strutils
 import writevalidutf8file
 import checks
 
-proc generateArtifacts(name: string, writeProc: WriteValidUtf8File): int =
-  ## Generate the skip and replace artifacts for the given name.
+proc generateArtifacts(name: string, writeProc: WriteValidUtf8File,
+    options = @["skip", "replace"]): int =
+  ## Generate the skip or replace artifacts for the given name.
 
-  var options = ["skip", "replace"]
-  for ix in [0, 1]:
-    let skipOrReplace = options[ix]
+  for skipOrReplace in options:
+    if not (skipOrReplace in ["skip", "replace"]):
+      echo "Invalid option, expected skip or replace."
+      return 1
     let filename = "artifacts/utf8.$1.$2.txt" % [skipOrReplace, name]
     let rc = writeProc(binTestCases, filename, skipOrReplace)
     if rc != 0:
@@ -44,9 +46,13 @@ suite "writevalidutf8file.nim":
     check rc == 0
 
   test "generate nim artifacts":
-    let rc = generateArtifacts("nim.1.4.8", writeValidUtf8FileNim)
+    let rc = generateArtifacts("nim.1.4.8", writeValidUtf8FileNim, @["skip"])
     check rc == 0
 
   test "generate python3 artifacts":
     let rc = generateArtifacts("python.3.7.5", writeValidUtf8FilePython3)
+    check rc == 0
+
+  test "generate node.js artifacts":
+    let rc = generateArtifacts("nodejs.17.2.0", writeValidUtf8FileNodeJs, @["replace"])
     check rc == 0

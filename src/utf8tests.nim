@@ -42,7 +42,7 @@ defined in the utf8tests.txt file. Show the differences to the screen.
 
 A skip type file discards invalid byte sequences. A replace type file
 replaces invalid byte sequences with the Unicode replacment character
-U+FFFD, <EFBFBD>.
+U+FFFD, <EF BF BD>.
 
 utf8tests -h -e=utf8tests.txt [-s=filename] [-r=filename]
 
