@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Read a binary file and write a utf-8 file.
+// Read a binary file and write it as an utf-8 file.
 
 function writeValidUtf8(inFilename, outFilename, skipOrReplace) {
   // Read the binary file input file, which might contain invalid
@@ -8,6 +8,8 @@ function writeValidUtf8(inFilename, outFilename, skipOrReplace) {
   // either skipping the invalid bytes or replacing them with U-FFFD.
   // When there is an error, display the error message to standard out
   // and return 1, else return 0.  The input file must be under 50k.
+
+  # Skip is not supported.
 
   const fs = require('fs')
 
