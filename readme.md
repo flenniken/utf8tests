@@ -45,7 +45,7 @@ Binary to hex table:
 1111 f
 ~~~
 
-# Invalid Byte Sequences
+## Invalid Byte Sequences
 
 Some byte sequences are invalid. It's common practice to replace
 invalid bytes sequences with with the Unicode replacement character
@@ -57,7 +57,7 @@ byte. See page 126, section 3.9 of:
 
 * [Unicode 14.0](https://www.unicode.org/versions/Unicode14.0.0/ch03.pdf) -- Unicode 14.0 Specification
 
-# Other UTF-8 Information
+## Other UTF-8 Information
 
 Wikipedia has a good explanation of UTF-8:
 
@@ -131,14 +131,14 @@ iconv (GNU libiconv 1.11)
 Copyright (C) 2000-2006 Free Software Foundation, Inc.
 ~~~
 
-# Reference Decoder
+## Reference Decoder
 
 I ported Bjoern Hoehrmann's decoder to Nim and that is the reference
 code in the unicodes.nim file in this project.
 
 * [Bjoern Hoehrmann Decoder](http://bjoern.hoehrmann.de/utf-8/decoder/dfa/)
 
-# UTF-8 Finite State Machine
+## UTF-8 Finite State Machine
 
 I created a state diagram for UTF-8. I started from the standard
 diagram created by Bjoern Hoehrmann and then added the error state. I
@@ -149,5 +149,4 @@ tweeking it in a text editor.
 * [Unicode 14.0](https://www.unicode.org/versions/Unicode14.0.0/ch03.pdf) -- See Table 3-7. Well-Formed UTF-8 Byte Sequences
 
 
-
-![UTF-8 Finite State Machine](utf8statemachine.svg)
+[![UTF-8 Finite State Machine](utf8statemachine.svg)](#utf-8-finite-state-machine)
