@@ -98,14 +98,18 @@ proc sanitizeUtf8Nim*(str: string, skipOrReplace = "replace"): string =
     if endPos > 0:
       result.add(str[ix .. endPos - 1])
     if not skipInvalid:
+      # This is not correct enough for current best practices.
       result.add("\ufffd")
     ix = endPos + 1
-
 
 proc writeValidUtf8FileNim*(inFilename: string, outFilename: string,
                            skipOrReplace = "replace"): int =
 
   if fileExistsAnd50kEcho(inFilename) != 0:
+    return 1
+
+  if skipOrReplace == "replace":
+    echo "Replace is not currently supported."
     return 1
 
   discard tryRemoveFile(outFilename)
@@ -151,4 +155,13 @@ proc writeValidUtf8FileNodeJs*(inFilename: string, outFilename: string,
     return 1
 
   let cmd = "node writers/writeValidUtf8.js $1 $2 $3"
+  return writeFileUsingWriter(cmd, inFilename, outFilename, skipOrReplace)
+
+proc writeValidUtf8FilePerl*(inFilename: string, outFilename: string,
+                           skipOrReplace = "replace"): int =
+  if skipOrReplace == "skip":
+    echo "Skip not supported."
+    return 1
+
+  let cmd = "perl writers/writeValidUtf8.pl $1 $2 $3"
   return writeFileUsingWriter(cmd, inFilename, outFilename, skipOrReplace)

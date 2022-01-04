@@ -6,7 +6,7 @@ import checks
 
 proc generateArtifacts(name: string, writeProc: WriteValidUtf8File,
     options = @["skip", "replace"]): int =
-  ## Generate the skip or replace artifacts for the given name.
+  ## Generate the skip and/or replace artifacts for the given name.
 
   for skipOrReplace in options:
     if not (skipOrReplace in ["skip", "replace"]):
@@ -22,7 +22,6 @@ suite "writevalidutf8file.nim":
   test "sanitizeUtf8Nim":
     check sanitizeUtf8Nim("abc") == "abc"
     check sanitizeUtf8Nim("abc", "skip") == "abc"
-    check sanitizeUtf8Nim("abc", "replace") == "abc"
     check sanitizeUtf8Nim("ab\xffc", "skip") == "abc"
     check sanitizeUtf8Nim("\xffabc", "skip") == "abc"
     check sanitizeUtf8Nim("abc\xff", "skip") == "abc"
@@ -30,7 +29,6 @@ suite "writevalidutf8file.nim":
     check sanitizeUtf8Nim("\xff\xff\xff", "skip") == ""
     check sanitizeUtf8Nim("a\xff\xffb", "skip") == "ab"
     check sanitizeUtf8Nim("", "skip") == ""
-    check sanitizeUtf8Nim("", "replace") == ""
 
   test "generate utf8tests.bin":
     # Re-generate the utf8tests.bin file when the utf8tests.txt file changes.
@@ -59,4 +57,8 @@ suite "writevalidutf8file.nim":
 
   test "generate iconv artifacts":
     let rc = generateArtifacts("iconv.1.11", writeValidUtf8FileIconv, @["skip"])
+    check rc == 0
+
+  test "generate perl artifacts":
+    let rc = generateArtifacts("perl.5.30.2", writeValidUtf8FilePerl, @["replace"])
     check rc == 0

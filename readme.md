@@ -57,6 +57,14 @@ byte. See page 126, section 3.9 of:
 
 * [Unicode 14.0](https://www.unicode.org/versions/Unicode14.0.0/ch03.pdf) -- Unicode 14.0 Specification
 
+The Unicode specification says:
+
+"An increasing number of implementations are adopting the handling of
+ill-formed subsequences as specified in the W3C standard for encoding
+to achieve consistent U+FFFD replacements."
+
+* [w3.org Encoding](http://www.w3.org/TR/encoding/) -- w3.org encoding
+
 ## Other UTF-8 Information
 
 Wikipedia has a good explanation of UTF-8:
@@ -150,3 +158,35 @@ tweeking it in a text editor.
 
 
 [![UTF-8 Finite State Machine](utf8statemachine.svg)](#utf-8-finite-state-machine)
+
+## Results
+
+I tested a few languages on my Mac. Each language was tested two ways,
+either skipping invalid byte sequences or replacing them with the
+replacement character.  Na means it is not supported by the language.
+
+| Language  | Skip | Replace |
+| ----- | ---- | ------- |
+| Iconv 1.11  | 🛑 fail | Na |
+| Nim 1.4.8 | 🛑 fail | Na |
+| Node js 17.2.0 | ✅ pass | ✅ pass |
+| Python 3.7.5 | ✅ pass | ✅ pass |
+| Perl 5.30.2 | Na | 🛑 fail |
+| Reference | ✅ pass | ✅ pass |
+
+Iconv 1.11:
+
+* allows characters over U+10FFFF
+* allows surrogates
+
+Nim:
+
+* allows characters over U+10FFFF
+* allows surrogates
+* allows over long sequences
+
+Perl:
+
+* changes internal use characters to the replacement character.
+* invalid sequences runs are replaced with one replacement
+  character. This conforms but is not best practices.

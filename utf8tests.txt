@@ -1,5 +1,5 @@
 # == UTF-8 Test Cases ==
-# Updated on Sun Jan  2 00:40:26 UTC 2022
+# Updated on Tue Jan  4 00:04:35 UTC 2022
 #
 # This file, utf8test.txt, contains test cases for testing UTF-8
 # decoders and validators.  You "compile" the file to generate
@@ -56,9 +56,6 @@
 # 2  Boundary condition test cases
 # 2.1  First possible sequence of a certain length
 
-# U+00000000, <00>
-5.0:valid hex:00
-
 # U+00000080, <c2 80>
 5.1:valid hex:c2 80
 
@@ -100,6 +97,9 @@
 # U+000007FF, <DF BF>
 8.1:valid hex:DF BF
 
+# 1110xxxx 10xxxxxx 10xxxxxx
+# 11101111 10111111 10111111
+# EF       BF       BF
 # U+0000FFFF, <EF BF BF>
 8.2:valid hex:EF BF BF
 
@@ -114,12 +114,6 @@
 
 # 2.3  Other boundary conditions
 
-# 1110xxxx 10xxxxxx 10xxxxxx
-# 11101111 10111111 10111111
-# EF       BF       BF
-
-# U+FFFF <EF BF BF>
-10.0:valid hex:EF BF BF
 
 # U+E000 <EE 80 80>
 10.1:valid hex:EE 80 80
@@ -457,7 +451,20 @@
 # 2 surrogates U+DBFF U+DFFF, <edafbf edbfbf>
 25.7:invalid hex:ed af bf ed bf bf:nothing:EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
-# # 5.3 Valid noncharacter code positions
+
+# Valid noncharacter code positions
+
+# Page 90, section 3.4, Characters and Encoding:
+# "Normally a coded character sequence consists of a sequence of
+# encoded characters, but it may also include noncharacters or
+# reserved code points."
+#
+# Page 80, section 3.2,  Conformance Requirements:
+# Note that security problems can result if noncharacter code
+# points are removed from text received from external
+# sources. For more information, see Section 23.7, Noncharacters,
+# and Unicode Technical Report #36, "Unicode Security
+# Considerations."
 
 # U+FFFE, <EF BF BE>
 26.0:valid hex:EF BF BE
@@ -651,10 +658,6 @@
 # The transition from the state 2 to state 1 can happen
 # with bytes 00-7f, c0-ff.
 
-# state 0 -> 2 -> 1
-# <c2 00>
-30.0:invalid hex:c2 00:00:EFBFBD 00
-
 # <c2 7f>, 7f = DELETE
 30.1:invalid hex:c2 7f:7f:EFBFBD 7f
 
@@ -663,9 +666,6 @@
 
 # <c2 ff>
 30.3:invalid hex:c2 ff:nothing:EFBFBD EFBFBD
-
-# <df 00>
-30.4:invalid hex:df 00:00:EFBFBD 00
 
 # <df 7f>
 30.5:invalid hex:df 7f:7f:EFBFBD 7f
@@ -677,10 +677,6 @@
 30.7:invalid hex:df ff:nothing:EFBFBD EFBFBD
 
 
-# state 0 -> 4 -> 2 -> 1
-# <e0 a0 00>
-31.0:invalid hex:e0 80 00:00:EFBFBD  EFBFBD  00
-
 # <e0 a0 7f>
 31.1:invalid hex:e0 80 7f:7f:EFBFBD  EFBFBD  7f
 
@@ -689,10 +685,6 @@
 
 # <e0 a0 ff>
 31.3:invalid hex:e0 80 ff:nothing:EFBFBD EFBFBD EFBFBD
-
-# state 0 -> 5 -> 2 -> 1
-# <ed 80 00>
-32.0:invalid hex:ed 80 00:00:EFBFBD 00
 
 # <ed 80 7f>
 32.1:invalid hex:ed 80 7f:7f:EFBFBD 7f
@@ -704,9 +696,6 @@
 32.3:invalid hex:ed 80 ff:nothing:EFBFBD EFBFBD
 
 
-# state 0 -> 6 -> 3 -> 2 -> 1
-# <f0 90 80 00>
-33.0:invalid hex:f0 90 80 00:00:EFBFBD 00
 
 # <f0 90 80 7f>
 33.1:invalid hex:f0 90 80 7f:7f:EFBFBD 7f
@@ -718,10 +707,6 @@
 33.3:invalid hex:f0 90 80 ff:nothing:EFBFBD EFBFBD
 
 
-# state 0 -> 7 -> 3 -> 2 -> 1
-# <f1 80 80 00>
-34.0:invalid hex:f1 80 80 00:00:EFBFBD 00
-
 # <f1 80 80 7f>
 34.1:invalid hex:f1 80 80 7f:7f:EFBFBD 7f
 
@@ -731,10 +716,6 @@
 # <f1 80 80 ff>
 34.3:invalid hex:f1 80 80 ff:nothing: EFBFBD EFBFBD
 
-
-# state 0 -> 8 -> 3 -> 2 -> 1
-# <f4 80 80 00>
-35.0:invalid hex:f4 80 80 00:00: EFBFBD 00
 
 # <f4 80 80 7f>
 35.1:invalid hex:f4 80 80 7f:7f: EFBFBD 7f
@@ -746,8 +727,41 @@
 35.3:invalid hex:f4 80 80 ff:nothing: EFBFBD EFBFBD
 
 
-# null <00>
-36.0:valid hex:00
+# The null <00> byte is a valid ASCII and valid UTF-8 character.
+# It is often used to terminate a string in C type
+# languages. That is why these tests are at the end of the file.
+
+
+# U+00000000, null, <00>
+5.0:valid hex:00
+
+# state 0 -> 2 -> 1
+# <c2 00>
+30.0:invalid hex:c2 00:00:EFBFBD 00
+
+# <df 00>
+30.4:invalid hex:df 00:00:EFBFBD 00
+
+# state 0 -> 4 -> 2 -> 1
+# <e0 a0 00>
+31.0:invalid hex:e0 80 00:00:EFBFBD  EFBFBD  00
+
+# state 0 -> 5 -> 2 -> 1
+# <ed 80 00>
+32.0:invalid hex:ed 80 00:00:EFBFBD 00
+
+# state 0 -> 6 -> 3 -> 2 -> 1
+# <f0 90 80 00>
+33.0:invalid hex:f0 90 80 00:00:EFBFBD 00
+
+# state 0 -> 7 -> 3 -> 2 -> 1
+# <f1 80 80 00>
+34.0:invalid hex:f1 80 80 00:00:EFBFBD 00
+
+# state 0 -> 8 -> 3 -> 2 -> 1
+# <f4 80 80 00>
+35.0:invalid hex:f4 80 80 00:00: EFBFBD 00
+
 
 # 0 over long tests.
 

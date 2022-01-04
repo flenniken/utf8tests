@@ -303,9 +303,11 @@ proc compareTablesEcho(eTable: OrderedTable[string, TestLine],
       else:
         expected = stringToHex(expectedStr)
 
-      echo "$1: test case: $2" % [eTestLine.numStr, stringToHex(eTestLine.testCase)]
-      echo "$1:  expected: $2" % [eTestLine.numStr, expected]
-      echo "$1:       got: $2" % [eTestLine.numStr, stringToHex(gotTestLine.testCase)]
+      let testType = if eTestLine.valid: "  valid" else: "invalid"
+
+      echo "$1: $2 test case: $3" % [eTestLine.numStr, testType, stringToHex(eTestLine.testCase)]
+      echo "$1:          expected: $2" % [eTestLine.numStr, expected]
+      echo "$1:               got: $2" % [eTestLine.numStr, stringToHex(gotTestLine.testCase)]
       echo ""
       result = 1
 

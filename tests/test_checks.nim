@@ -285,6 +285,28 @@ suite "checks.nim":
 
     check found == false
 
+  test "check utf8tests.bin for first null":
+    ## Test 5.0 is at the bottom of the bin test file. Make sure no
+    ## null appears before it.
+    var found = false
+    var lineNum = 1
+    var done = false
+    for line in lines(binTestCases):
+      for ch in line:
+        if ord(ch) == 0:
+          let pos = find(line, ':')
+          let firstNumStr = line[0 .. pos-1]
+          if firstNumStr == "5.0":
+            done = true
+            break
+          echo fmt"Line {lineNum} has a null: " & line[0 .. pos-1]
+          found = true
+      if done:
+        break
+      inc(lineNum)
+
+    check found == false
+
   test "reference check skip":
     let gotFilename = "artifacts/utf8.skip.ref.txt"
     let rc = checkFile(binTestCases, gotFilename, "skip")
@@ -294,38 +316,3 @@ suite "checks.nim":
     let gotFilename = "artifacts/utf8.replace.ref.txt"
     let rc = checkFile(binTestCases, gotFilename, "replace")
     check rc == 0
-
-  test "python3 check skip":
-    let gotFilename = "artifacts/utf8.skip.python.3.7.5.txt"
-    let rc = checkFile(binTestCases, gotFilename, "skip")
-    check rc == 0
-
-  test "python3 check replace":
-    let gotFilename = "artifacts/utf8.replace.python.3.7.5.txt"
-    let rc = checkFile(binTestCases, gotFilename, "replace")
-    check rc == 0
-
-  # test "nim check skip":
-  #   let gotFilename = "artifacts/utf8.skip.nim.1.4.8.txt"
-  #   let rc = checkFile(binTestCases, gotFilename, "skip")
-  #   check rc == 0
-
-  # test "nim check replace":
-  #   let gotFilename = "artifacts/utf8.replace.nim.1.4.8.txt"
-  #   let rc = checkFile(binTestCases, gotFilename, "replace")
-  #   check rc == 0
-
-  # test "chrome check replace":
-  #   let gotFilename = "artifacts/utf8.replace.chrome.96.0.4664.110.txt"
-  #   let rc = checkFile(binTestCases, gotFilename, "replace", true)
-  #   check rc == 0
-
-  # test "firefox check replace":
-  #   let gotFilename = "artifacts/utf8.replace.firefox.95.0.2.txt"
-  #   let rc = checkFile(binTestCases, gotFilename, "replace", false)
-  #   check rc == 0
-
-  # test "safari check replace":
-  #   let gotFilename = "artifacts/utf8.replace.safari.14.1.2.txt"
-  #   let rc = checkFile(binTestCases, gotFilename, "replace", false)
-  #   check rc == 0
