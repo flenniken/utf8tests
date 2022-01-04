@@ -163,30 +163,47 @@ tweeking it in a text editor.
 
 I tested a few languages on my Mac. Each language was tested two ways,
 either skipping invalid byte sequences or replacing them with the
-replacement character.  Na means it is not supported by the language.
+replacement character.  NA means it is not supported by the language.
 
 | Language  | Skip | Replace |
 | ----- | ---- | ------- |
-| Iconv 1.11  | 🛑 fail | Na |
-| Nim 1.4.8 | 🛑 fail | Na |
+| Iconv 1.11  | 🛑 fail | NA |
+| Nim 1.4.8 | 🛑 fail | NA |
 | Node js 17.2.0 | ✅ pass | ✅ pass |
 | Python 3.7.5 | ✅ pass | ✅ pass |
-| Perl 5.30.2 | Na | 🛑 fail |
+| Perl 5.30.2 | NA | 🛑 fail |
 | Reference | ✅ pass | ✅ pass |
 
 Iconv 1.11:
 
+This is an old version maybe it is fixed in a new version?
+
 * allows characters over U+10FFFF
 * allows surrogates
 
-Nim:
+Nim 1.4.8:
 
 * allows characters over U+10FFFF
 * allows surrogates
 * allows over long sequences
 
-Perl:
+Perl 5.30.2:
 
 * changes internal use characters to the replacement character.
-* invalid sequences runs are replaced with one replacement
-  character. This conforms but is not best practices.
+* invalid sequence runs are replaced with one replacement
+  character. This conforms to the UTF-8 standard but is not best
+  practices.
+
+## Contribute
+
+You can contribute to this project by writing a command line app in
+your favorite language and adding it to the writers directory.
+
+The app reads a binary file, encodes the bytes as UTF-8, then writes
+it to a new file. It takes three command line parameters: the input
+file name the output file name and the word “skip” or “replace”.
+
+Or you can run the utf8tests.bin file through your decoder and post
+the resulting file to the artifacts directory.
+
+If you find a bug or something is wrong, please file an issue.
