@@ -48,7 +48,7 @@ Binary to hex table:
 ## Invalid Byte Sequences
 
 Some byte sequences are invalid. It's common practice to replace
-invalid bytes sequences with with the Unicode replacement character
+invalid bytes sequences with the Unicode replacement character
 U+FFFD, &lt;EF BF BD&gt;.
 
 Following best practices you replace "Maximal Subpart" runs of invalid
