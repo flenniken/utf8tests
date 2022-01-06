@@ -1,4 +1,5 @@
 import std/unittest
+import std/unicode
 import unicodes
 
 proc testSanitizeutf8Empty(str: string): bool =
@@ -147,3 +148,18 @@ suite "unicodes.nim":
     check utf8CharString("\xF0\x9D\x92\x9C", 1) == ""
     check utf8CharString("\xF0\x9D\x92\x9C", 2) == ""
     check utf8CharString("\xF0\x9D\x92\x9C", 3) == ""
+
+  test "validateUtf8":
+    check validateUtf8("\xff") == 0
+
+    # # too big U+001FFFFF, <F7 BF BF BF>
+    # # 6.0:invalid hex:F7 BF BF BF:nothing:EFBFBD  EFBFBD  EFBFBD  EFBFBD
+    # check validateUtf8("\xf7\xbf\xbf\xbf") == 0
+
+    # # overlong solidus <e0 80 af>
+    # # 22.3:invalid hex:e0 80 af:nothing:EFBFBD EFBFBD EFBFBD
+    # check validateUtf8("\xe0\x80\xaf") == 0
+
+    # # 1 surrogate U+D800, <ed a0 80>
+    # # 24.0:invalid hex:ed a0 80:nothing:EFBFBD EFBFBD EFBFBD
+    # check validateUtf8("\xed\xa0\x80") == 0

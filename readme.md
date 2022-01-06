@@ -191,8 +191,8 @@ Perl 5.30.2:
 
 * changes internal use characters to the replacement character.
 * invalid sequence runs are replaced with one replacement
-  character. This conforms to the UTF-8 standard but is not best
-  practices.
+  character. This is cool and conforms to the UTF-8 standard but is
+  not the current best practices.
 
 ## Contribute
 
