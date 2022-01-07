@@ -12,6 +12,7 @@ import opresult
 const
   testCases* = "utf8tests.txt"
   binTestCases* = "utf8tests.bin"
+  browserTestCases* = "utf8browsertests.txt"
 
 type
   WriteValidUtf8File* = proc (inFilename, outFilename: string,
@@ -239,7 +240,7 @@ proc readTestCasesFile*(filename: string, readIgnore = false):
 
   result = newOpResultTestLines(dict)
 
-proc createUtf8testsBinFile*(resultFilename: string): string =
+proc createUtf8testsBinFile*(resultFilename: string, forBrowsers = false): string =
   ## Create a bin file from the utf8tests.txt file. The bin
   ## file has two types of lines, valid lines and invalid lines.  If
   ## there is an error, return a message telling what went wrong.
@@ -261,6 +262,10 @@ proc createUtf8testsBinFile*(resultFilename: string): string =
     resultFile.close()
 
   for testLine in table.values:
+    # The 36 numbered tests are for browsers and editors.
+    if forBrowsers:
+      if not testLine.numStr.startsWith("36."):
+        continue
     var lineType: string
     if testLine.valid:
       lineType = "valid"

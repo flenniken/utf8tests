@@ -39,6 +39,15 @@ suite "writevalidutf8file.nim":
       echo "run the tests again"
       fail()
 
+  test "generate utf8browser.txt":
+    # Re-generate the utf8BrowserTests.txt file when the utf8tests.txt file changes.
+    if not fileExists(browserTestCases) or fileNewer(testCases, browserTestCases):
+      echo "generating file: " & browserTestCases
+      let msg = createUtf8testsBinFile(browserTestCases, true)
+      check msg == ""
+      echo "run the tests again"
+      fail()
+
   test "generate reference artifacts":
     let rc = generateArtifacts("ref", writeValidUtf8Ref)
     check rc == 0

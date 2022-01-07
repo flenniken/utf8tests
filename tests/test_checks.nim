@@ -221,26 +221,6 @@ suite "checks.nim":
     check tableOr.isValue()
     discard tryRemoveFile(filename)
 
-  test "readTestCasesFile firefox":
-    let gotFilename = "artifacts/utf8.replace.firefox.95.0.2.txt"
-    let tableOr = readTestCasesFile(gotFilename)
-    if tableOr.isMessage:
-      echo "Unable to read the file."
-      echo tableOr.message
-    check tableOr.isValue()
-
-  test "readTestCasesFile firefox":
-    let gotFilename = "artifacts/utf8.replace.safari.14.1.2.txt"
-    let tableOr = readTestCasesFile(gotFilename)
-    if tableOr.isMessage:
-      echo "Unable to read the file."
-      echo tableOr.message
-    check tableOr.isValue()
-    let table = tableOr.value
-    check table.hasKey("19.1")
-
-
-
   test "readTestCasesFile testCases":
     let tableOr = readTestCasesFile(testCases)
     if tableOr.isMessage:

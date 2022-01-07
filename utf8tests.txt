@@ -1,5 +1,5 @@
 # == UTF-8 Test Cases ==
-# Updated on Tue Jan  4 00:04:35 UTC 2022
+# Updated on Fri Jan  7 16:50:13 UTC 2022
 #
 # This file, utf8test.txt, contains test cases for testing UTF-8
 # decoders and validators.  You "compile" the file to generate
@@ -66,8 +66,12 @@
 5.3:valid hex:f0 90 80 80
 
 # too big
+
 # too big U+001FFFFF, <F7 BF BF BF>
 6.0:invalid hex:F7 BF BF BF:nothing:EFBFBD  EFBFBD  EFBFBD  EFBFBD
+
+# U+10FFFF is the biggest. 110000, <F4 90 80 80>
+6.0.1:invalid hex:F4 90 80 80:nothing:EFBFBD  EFBFBD  EFBFBD  EFBFBD
 
 # too big U+00200000, <f8 88 80 80 80>
 6.1:invalid hex:f8 88 80 80 80:nothing:EFBFBD  EFBFBD  EFBFBD  EFBFBD  EFBFBD
@@ -761,6 +765,43 @@
 # state 0 -> 8 -> 3 -> 2 -> 1
 # <f4 80 80 00>
 35.0:invalid hex:f4 80 80 00:00: EFBFBD 00
+
+# The 36 tests are designed for browser and editors.
+# When viewing the left and right sides should be the same.
+
+# The replacement character.
+# replacement character=EFBFBD 3d EFBFBD 2e
+36.1: valid hex: 7265706C6163656D656E74206368617261637465723D EFBFBD 3d EFBFBD 2e
+
+# Invalid ff byte.
+36.2: invalid hex: EFBFBD 3d ff 2e : EFBFBD 3d 2e : EFBFBD 3d EFBFBD 2e
+
+# Invalid two byte sequence <e0 80>.
+36.3: invalid hex: EFBFBD EFBFBD 3d e0 80 2e : EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD 3d EFBFBD EFBFBD 2e
+
+# Invalid three byte sequence <f0 80 80>.
+36.4: invalid hex: EFBFBD EFBFBD EFBFBD 3d f0 80 80 2e : EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD 2e
+
+# Invalid three byte sequence followed by invalid bytes <f8 80 80 80>.
+36.5: invalid hex: EFBFBD EFBFBD EFBFBD EFBFBD 3d f0 80 80 80  2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD EFBFBD 2e
+
+# Invalid two byte sequence <e0 80> twice.
+36.6: invalid hex: EFBFBD EFBFBD EFBFBD EFBFBD 3d e0 80 e0 80 2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD EFBFBD 2e
+
+# too big U+001FFFFF, <F7 BF BF BF>
+36.7:invalid hex:EFBFBD EFBFBD EFBFBD EFBFBD 3d F7 BF BF BF 2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD EFBFBD 2e
+
+# 1 surrogate U+D800, <ed a0 80>
+36.8:invalid hex:EFBFBD EFBFBD EFBFBD 3d ed a0 80 2e : EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD 2e
+
+# valid noncharacter U+FFFF, <EF BF BF>
+36.9:valid hex:EF BF BF 3d EF BF BF 2e
+
+# valid noncharacter U+FFFE, <EF BF BE>
+36.9.1:valid hex:EF BF BE 3d EF BF BE 2e
+
+# overlong solidus <e0 80 af>
+36.10:invalid hex:EFBFBD EFBFBD EFBFBD 3d e0 80 af 2e : EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD 2e
 
 
 # 0 over long tests.
