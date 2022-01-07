@@ -1,21 +1,9 @@
 import std/os
 import std/unittest
 import std/strutils
+import std/strformat
 import writevalidutf8file
 import checks
-
-proc generateArtifacts(name: string, writeProc: WriteValidUtf8File,
-    options = @["skip", "replace"]): int =
-  ## Generate the skip and/or replace artifacts for the given name.
-
-  for skipOrReplace in options:
-    if not (skipOrReplace in ["skip", "replace"]):
-      echo "Invalid option, expected skip or replace."
-      return 1
-    let filename = "artifacts/utf8.$1.$2.txt" % [skipOrReplace, name]
-    let rc = writeProc(binTestCases, filename, skipOrReplace)
-    if rc != 0:
-      result = rc
 
 suite "writevalidutf8file.nim":
 
@@ -48,26 +36,46 @@ suite "writevalidutf8file.nim":
       echo "run the tests again"
       fail()
 
-  test "generate reference artifacts":
-    let rc = generateArtifacts("ref", writeValidUtf8Ref)
-    check rc == 0
+  test "generate artifacts":
+    type
+      Decoder = object
+        name: string
+        writeProc: WriteValidUtf8File
+        skipOrReplace: string
+        passOrFail: string
 
-  test "generate nim artifacts":
-    let rc = generateArtifacts("nim.1.4.8", writeValidUtf8FileNim, @["skip"])
-    check rc == 0
+    func newDecoder(name: string, writeProc: WriteValidUtf8File,
+        skipOrReplace: string, passOrFail: string): Decoder =
+      result = Decoder(name: name, writeProc: writeProc,
+        skipOrReplace: skipOrReplace, passOrFail: passOrFail)
 
-  test "generate python3 artifacts":
-    let rc = generateArtifacts("python.3.7.5", writeValidUtf8FilePython3)
-    check rc == 0
+    let decoders = [
+      newDecoder("ref", writeValidUtf8Ref, "skip", "pass"),
+      newDecoder("ref", writeValidUtf8Ref, "replace", "pass"),
+      newDecoder("nim.1.4.8", writeValidUtf8FileNim, "skip", "fail"),
+      newDecoder("python.3.7.5", writeValidUtf8FilePython3, "skip", "pass"),
+      newDecoder("python.3.7.5", writeValidUtf8FilePython3, "replace", "pass"),
+      newDecoder("nodejs.17.2.0", writeValidUtf8FileNodeJs, "replace", "pass"),
+      newDecoder("iconv.1.11", writeValidUtf8FileIconv, "skip", "fail"),
+      newDecoder("perl.5.30.2", writeValidUtf8FilePerl, "replace", "fail"),
+    ]
+    for decoder in decoders:
+      let skipOrReplace = decoder.skipOrReplace
+      let artifactName = "artifacts/utf8.$1.$2.txt" % [skipOrReplace, decoder.name]
+      var rc: int
 
-  test "generate node.js artifacts":
-    let rc = generateArtifacts("nodejs.17.2.0", writeValidUtf8FileNodeJs, @["replace"])
-    check rc == 0
+      # Generate the artifact.
+      rc = decoder.writeProc(binTestCases, artifactName, skipOrReplace)
+      if rc != 0:
+        echo decoder.name
+      check rc == 0
 
-  test "generate iconv artifacts":
-    let rc = generateArtifacts("iconv.1.11", writeValidUtf8FileIconv, @["skip"])
-    check rc == 0
+      # Check the artifact.
+      rc = checkFile(binTestCases, artifactName, skipOrReplace, echoOut=false)
 
-  test "generate perl artifacts":
-    let rc = generateArtifacts("perl.5.30.2", writeValidUtf8FilePerl, @["replace"])
-    check rc == 0
+      if rc != 0 and decoder.passOrFail == "pass":
+        echo fmt"{decoder.name} failed the tests."
+        fail()
+      elif rc == 0 and decoder.passOrFail == "fail":
+        echo fmt"{decoder.name} was expected to fail but it passed."
+        fail()

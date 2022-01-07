@@ -138,7 +138,7 @@ proc writeValidUtf8FileNim*(inFilename: string, outFilename: string,
 proc writeValidUtf8FileIconv*(inFilename: string, outFilename: string,
     skipOrReplace = "replace"): int =
   if skipOrReplace == "replace":
-    echo "Replace not supported"
+    echo "Replace not supported."
     return 1
   let cmd = "iconv -c -f UTF-8 -t UTF-8 $1 >$2 2>/dev/null"
   return writeFileUsingWriter(cmd, inFilename, outFilename, skipOrReplace)
@@ -151,7 +151,7 @@ proc writeValidUtf8FilePython3*(inFilename: string, outFilename: string,
 proc writeValidUtf8FileNodeJs*(inFilename: string, outFilename: string,
                            skipOrReplace = "replace"): int =
   if skipOrReplace == "skip":
-    echo "Skip not supported"
+    echo "Skip not supported."
     return 1
 
   let cmd = "node writers/writeValidUtf8.js $1 $2 $3"

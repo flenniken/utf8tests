@@ -1,7 +1,6 @@
 import std/unittest
 import std/os
 import std/strformat
-import std/tables
 import opresult
 import checks
 
@@ -286,13 +285,3 @@ suite "checks.nim":
       inc(lineNum)
 
     check found == false
-
-  test "reference check skip":
-    let gotFilename = "artifacts/utf8.skip.ref.txt"
-    let rc = checkFile(binTestCases, gotFilename, "skip")
-    check rc == 0
-
-  test "reference check replace":
-    let gotFilename = "artifacts/utf8.replace.ref.txt"
-    let rc = checkFile(binTestCases, gotFilename, "replace")
-    check rc == 0

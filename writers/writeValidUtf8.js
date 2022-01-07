@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Read a binary file and write it as an utf-8 file.
+// Read a binary file and write it as an UTF-8 file.
 
 function writeValidUtf8(inFilename, outFilename, skipOrReplace) {
   // Read the binary file input file, which might contain invalid

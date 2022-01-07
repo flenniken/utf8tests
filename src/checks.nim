@@ -273,22 +273,22 @@ proc createUtf8testsBinFile*(resultFilename: string, forBrowsers = false): strin
       lineType = "invalid"
     resultFile.write(fmt"{testLine.numStr}:{lineType}:{testLine.testCase}"&"\n")
 
-proc compareTablesEcho(eTable: OrderedTable[string, TestLine],
+proc compareTables(eTable: OrderedTable[string, TestLine],
     gotTable: OrderedTable[string, TestLine],
-    skipOrReplace="replace"): int =
-  ## Compare two tables and show the differences. Return 0 when they
-  ## are the same.
+    skipOrReplace="replace"): seq[string] =
+  ## Compare two tables and return a list of lines telling the
+  ## differences. They are the same when no lines are returned.
 
   if eTable.len != gotTable.len:
-    echo "The two tables have different number of elements."
-    echo "expected: " & $eTable.len
-    echo "     got: " & $gotTable.len
-    result = 1
+    result.add("""
+The two tables have different number of elements.
+expected: $1
+     got: $2
+""" % [$eTable.len, $gotTable.len])
 
   for eNumStr, eTestLine in pairs(eTable):
     if not gotTable.hasKey(eNumStr):
-      echo fmt"Test number '{eNumStr}' does not exist in the generated table."
-      result = 1
+      result.add("Test number '$1' does not exist in the generated table." % eNumStr)
       continue
     let gotTestLine = gotTable[eNumStr]
 
@@ -310,14 +310,18 @@ proc compareTablesEcho(eTable: OrderedTable[string, TestLine],
 
       let testType = if eTestLine.valid: "  valid" else: "invalid"
 
-      echo "$1: $2 test case: $3" % [eTestLine.numStr, testType, stringToHex(eTestLine.testCase)]
-      echo "$1:          expected: $2" % [eTestLine.numStr, expected]
-      echo "$1:               got: $2" % [eTestLine.numStr, stringToHex(gotTestLine.testCase)]
-      echo ""
-      result = 1
+      result.add("""
+$1: $2 test case: $3
+$1:          expected: $4
+$1:               got: $5
+""" % [
+        eTestLine.numStr, testType, stringToHex(eTestLine.testCase),
+        expected,
+        stringToHex(gotTestLine.testCase)
+      ])
 
 proc checkFile*(expectedFilename: string, gotFilename: string,
-    skipOrReplace = "replace", readIgnore = false): int =
+    skipOrReplace = "replace", readIgnore = false, echoOut = true): int =
   ## Check the file for differences with the expected output. Echo
   ## differences to the screen. Return 0 when the output matches the
   ## expected output. When readIgnore is true, ignore malformed lines
@@ -338,6 +342,8 @@ proc checkFile*(expectedFilename: string, gotFilename: string,
   let eTable = eTableOr.value
 
   # Compare the got table with the expected table.
-  let rc = compareTablesEcho(eTable, gotTable, skipOrReplace)
-  if rc != 0:
+  let lines = compareTables(eTable, gotTable, skipOrReplace)
+  if echoOut:
+    echo lines.join("\n")
+  if lines.len > 0:
     result = 1
