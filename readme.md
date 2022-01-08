@@ -84,6 +84,19 @@ Many test cases in utf8tests.txt were inspired by Markus Kuhn tests. See:
 
 * [Markus Kuhn UTF-8 Tests](https://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt) -- UTF-8 decoder capability and stress test
 
+# Test Groups
+
+The test file groups the tests into these categories:
+
+* Valid Characters
+* Too Big Characters
+* Overlong Characters
+* Surrogate Characters
+* Valid Noncharacters
+* Miscellaneous Byte Sequences
+* Browser Tests
+* Null Characters
+
 ## Test Your Decoder
 
 You can run the utf8tests.bin file through your decoder then check its
@@ -95,29 +108,33 @@ For the example, using the iconv command line app you can decode the
 utf8tests.bin file producing the file utf8.skip.icon.txt.
 
 ~~~
-iconv -c -f UTF-8 -t UTF-8 utf8tests.bin >utf8.skip.icon.txt
+iconv -c -f UTF-8 -t UTF-8 utf8tests.bin >artifacts/utf8.skip.icon.txt
 ~~~
 
 You pass the resulting file to utf8tests and it checks each test line and
 reports the tests that fail.
 
-In my version of iconv, it allows values bigger than the maximum and
+In my version of iconv, it allows characters bigger than the maximum and
 it allows surrogates. Here is a sample of the output:
 
 ~~~
-bin/utf8tests -e=utf8tests.txt --skip=utf8.skip.icon.txt
+bin/utf8tests -e=utf8tests.txt --skip=artifacts/utf8.skip.iconv.1.11.txt | less
 
-6.0: test case: f7 bf bf bf
-6.0:  expected: nothing
-6.0:       got: f7 bf bf bf
+6.0: invalid test case: f7 bf bf bf
+6.0:          expected: nothing
+6.0:               got: f7 bf bf bf
 
-6.1: test case: f8 88 80 80 80
-6.1:  expected: nothing
-6.1:       got: f8 88 80 80 80
+6.0.1: invalid test case: f4 90 80 80
+6.0.1:          expected: nothing
+6.0.1:               got: f4 90 80 80
 
-6.2: test case: f7 bf bf bf bf
-6.2:  expected: nothing
-6.2:       got: f7 bf bf bf
+6.1: invalid test case: f8 88 80 80 80
+6.1:          expected: nothing
+6.1:               got: f8 88 80 80 80
+
+6.2: invalid test case: f7 bf bf bf bf
+6.2:          expected: nothing
+6.2:               got: f7 bf bf bf
 ...
 ~~~
 
@@ -125,7 +142,6 @@ The utf8tests.txt file has comments telling what the test does. Here
 is the 6.0 test:
 
 ~~~
-# too big
 # too big U+001FFFFF, <F7 BF BF BF>
 6.0:invalid hex:F7 BF BF BF:nothing:EFBFBD  EFBFBD  EFBFBD  EFBFBD
 ~~~
@@ -141,8 +157,8 @@ Copyright (C) 2000-2006 Free Software Foundation, Inc.
 
 ## Reference Decoder
 
-I ported Bjoern Hoehrmann's decoder to Nim and that is the reference
-code in the unicodes.nim file in this project.
+I ported Bjoern Hoehrmann's decoder to Nim for a reference
+implementation. You can find it in the unicodes.nim file.
 
 * [Bjoern Hoehrmann Decoder](http://bjoern.hoehrmann.de/utf-8/decoder/dfa/)
 
@@ -161,12 +177,14 @@ tweeking it in a text editor.
 
 ## Results
 
-I tested a few languages on my Mac. Each language was tested two ways,
-either skipping invalid byte sequences or replacing them with the
-replacement character.  NA means it is not supported by the language.
+I tested a few languages, editors and browsers on my Mac. Each
+language was tested in one or two ways, either skipping invalid byte
+sequences or replacing them with the replacement character.  NA means
+it is not supported by the language.
 
-| Language  | Skip | Replace |
+| Code  | Skip | Replace |
 | ----- | ---- | ------- |
+| Emacs 25.3.1  | 🛑 fail | NA |
 | Iconv 1.11  | 🛑 fail | NA |
 | Nim 1.4.8 | 🛑 fail | NA |
 | Node js 17.2.0 | ✅ pass | ✅ pass |
@@ -174,25 +192,10 @@ replacement character.  NA means it is not supported by the language.
 | Perl 5.30.2 | NA | 🛑 fail |
 | Reference | ✅ pass | ✅ pass |
 
-Iconv 1.11:
+See the procedure page for the steps to reproduce the results shown in
+the table.
 
-This is an old version maybe it is fixed in a new version?
-
-* allows characters over U+10FFFF
-* allows surrogates
-
-Nim 1.4.8:
-
-* allows characters over U+10FFFF
-* allows surrogates
-* allows over long sequences
-
-Perl 5.30.2:
-
-* changes internal use characters to the replacement character.
-* invalid sequence runs are replaced with one replacement
-  character. This is cool and conforms to the UTF-8 standard but is
-  not the current best practices.
+* [Procedures](procedures.md) &mdash; steps to reproduce the table results.
 
 ## Contribute
 

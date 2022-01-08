@@ -135,6 +135,11 @@ proc writeValidUtf8FileNim*(inFilename: string, outFilename: string,
 
   result = 0 # success
 
+proc writeNothing*(inFilename: string, outFilename: string,
+    skipOrReplace = "replace"): int =
+    echo "writeNothing should not be called."
+    return 1
+
 proc writeValidUtf8FileIconv*(inFilename: string, outFilename: string,
     skipOrReplace = "replace"): int =
   if skipOrReplace == "replace":
