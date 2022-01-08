@@ -1,45 +1,66 @@
 # == UTF-8 Test Cases ==
-# Updated on Fri Jan  7 16:50:13 UTC 2022
-#
+
+# Updated on Fri Jan  7 22:37:47 UTC 2022
+
 # This file, utf8test.txt, contains test cases for testing UTF-8
 # decoders and validators.  You "compile" the file to generate
-# the file utf8test.bin used for testing.
-#
+# the file utf8test.bin and utf8browsertests.txt used for testing.
+
+
+
 # == About the File Format ==
-#
+
 # The compiler skips blank lines or lines that start with a #.
-#
+
 # The other lines test valid or invalid UTF-8 byte sequences.  A
 # test line starts with a unique string. Tests lines may be added
-# or removed but never changed.
-#
+# moved or removed but never changed.
+
 # This file is an ASCII file without control characters.
-#
+
 # * The replacment character is U+FFFD <EFBFBD>.
 # * nothing = ""
-#
+
 # Line types in this file:
-#
+
 # # <comment line>
 # <blank line>
 # num:valid:ASCII bytes
 # num:valid hex:hexString
 # num:invalid hex:hexString:hexString2:hexString3
+
+# * hexString2 is the expected value when skipping invalid bytes.
+# * hexString2 is the expected value when replacing invalid bytes with U+FFFD.
+
+
+
+# == utf8tests.bin ==
 #
-# hexString2 is the expected value when skipping invalid bytes.
-# hexString2 is the expected value when replacing invalid bytes with U+FFFD.
-#
-# The utf8tests.bin is a binary file.
-#
-# Line types in the utf8tests.bin file:
+# The utf8tests.bin is a binary file. Line types in the utf8tests.bin file:
 #
 # num:valid:bytes
 # num:invalid:bytes
 
+
+
 # == Test Cases ==
 
-1.0.1:valid hex:31
+# This file groups the tests into these categories:
 
+# * Valid Characters
+# * Too Big Characters
+# * Overlong Characters
+# * Surrogate Characters
+# * Valid Noncharacters
+# * Miscellaneous Byte Sequences
+# * Browser Tests
+# * Null Characters
+
+
+
+# === Valid Characters ===
+
+1.0.1:valid hex:31
 1.1.0:valid:abc
 
 # Two byte character.
@@ -53,19 +74,59 @@
 # U+1D49C
 4.0:valid hex:F0 9D 92 9C
 
-# 2  Boundary condition test cases
-# 2.1  First possible sequence of a certain length
-
+# first two byte sequence
 # U+00000080, <c2 80>
 5.1:valid hex:c2 80
 
+# first three byte sequence
 # U+00000800, <e0 a0 80>
 5.2:valid hex:e0 a0 80
 
+# first four byte sequence
 # U+00010000, <f0 90 80 80>
 5.3:valid hex:f0 90 80 80
 
-# too big
+# U+0080, <c2 80>
+7.1:valid hex:c2 80
+7.2:valid hex:c2 81
+7.3:valid hex:c2 82
+
+# last one byte character U+0000007F, DELETE
+8.0:valid hex:7F
+
+# last two byte character U+000007FF, <DF BF>
+8.1:valid hex:DF BF
+
+# 1110xxxx 10xxxxxx 10xxxxxx
+# 11101111 10111111 10111111
+# EF       BF       BF
+# U+0000FFFF, <EF BF BF>
+8.2:valid hex:EF BF BF
+
+# U+0010FFFF, <F4 8F BF BF>
+8.3:valid hex:F4 8F BF BF
+
+# U+E000 <EE 80 80>
+10.1:valid hex:EE 80 80
+
+# U+FFFD, replacement character, <EFBFBD>
+10.2:valid hex:EFBFBD
+
+# U+10FFFF, biggest code point, <F4 8F BF BF>
+10.3:valid hex:F4 8F BF BF
+
+# U+002f, SOLIDUS
+22.0:valid:/
+
+# U+002f, SOLIDUS <2f>
+22.1:valid hex:2F
+
+# U+0800, <e0 a0 80>
+22.7:valid hex:e0 a0 80
+
+
+
+# === Too Big Characters ===
 
 # too big U+001FFFFF, <F7 BF BF BF>
 6.0:invalid hex:F7 BF BF BF:nothing:EFBFBD  EFBFBD  EFBFBD  EFBFBD
@@ -88,45 +149,12 @@
 # too big, <F7 BF BF BF BF BF BF>
 6.5:invalid hex:F7 BF BF BF BF BF BF:nothing:EFBFBD  EFBFBD  EFBFBD  EFBFBD  EFBFBD  EFBFBD  EFBFBD
 
-# U+0080, <c2 80>
-7.1:valid hex:c2 80
-7.2:valid hex:c2 81
-7.3:valid hex:c2 82
-
-# 2.2  Last possible sequence of a certain length
-
-# U+0000007F, DELETE
-8.0:valid hex:7F
-
-# U+000007FF, <DF BF>
-8.1:valid hex:DF BF
-
-# 1110xxxx 10xxxxxx 10xxxxxx
-# 11101111 10111111 10111111
-# EF       BF       BF
-# U+0000FFFF, <EF BF BF>
-8.2:valid hex:EF BF BF
-
-# U+0010FFFF, <F4 8F BF BF>
-8.3:valid hex:F4 8F BF BF
-
 # <F7 BF BF>
 9.0:invalid hex:F7 BF BF:nothing:EFBFBD  EFBFBD  EFBFBD
-
-# Example in the Unicode spec. Constraints on Conversion Processes, pg 126, section 3.9.
-9.1:invalid hex:C2 41 42:41 42:EFBFBD 41 42
 
 # 2.3  Other boundary conditions
 
 
-# U+E000 <EE 80 80>
-10.1:valid hex:EE 80 80
-
-# U+FFFD, replacement character, <EFBFBD>
-10.2:valid hex:EFBFBD
-
-# U+10FFFF, biggest code point:<F4 8F BF BF>
-10.3:valid hex:F4 8F BF BF
 
 # 3  Malformed sequences
 
@@ -278,14 +306,7 @@
 # <fd>
 17.1:invalid hex:fd20:20:EFBFBD 20
 
-
 # 3.3  Sequences with last continuation byte missing
-
-# 3.3.1  2-byte sequence with last byte missing (U+0000):
-# 3.3.2  3-byte sequence with last byte missing (U+0000):
-# 3.3.3  4-byte sequence with last byte missing (U+0000):
-# 3.3.4  5-byte sequence with last byte missing (U+0000):
-# 3.3.5  6-byte sequence with last byte missing (U+0000):
 
 # <c0>
 18.0:invalid hex:c0:nothing:EFBFBD
@@ -303,38 +324,26 @@
 18.4:invalid hex:fc 80 80 80 80:nothing:EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 
-# 3.3.6  2-byte sequence with last byte missing (U+000007FF):
-# 3.3.7  3-byte sequence with last byte missing (U+0000FFFF):
-# 3.3.8  4-byte sequence with last byte missing (U+001FFFFF):
-# 3.3.9  5-byte sequence with last byte missing (U+03FFFFFF):
-# 3.3.10 6-byte sequence with last byte missing (U+7FFFFFFF):
-
-# U+000007FF, <df>
+# 0 -> 2 -> 1, U+000007FF, <df>
 19.0:invalid hex:df:nothing:EFBFBD
 
-# U+0000FFFF, <ef bf>
+# 0 -> 3 -> 2 -> 1, U+0000FFFF, <ef bf>
 19.1:invalid hex:ef bf:nothing:EFBFBD
 
-# U+001FFFFF, <f7 bf bf>
+# 0 -> 1, U+001FFFFF, <f7 bf bf>
 19.2:invalid hex:f7 bf bf:nothing:EFBFBD EFBFBD EFBFBD
 
-# U+03FFFFFF, <fb bf bf bf>
+# 0->1, U+03FFFFFF, <fb bf bf bf>
 19.3:invalid hex:fb bf bf bf:nothing:EFBFBD EFBFBD EFBFBD EFBFBD
 
-# U+7FFFFFFF, <fd bf bf bf bf>
+# 0->1, U+7FFFFFFF, <fd bf bf bf bf>
 19.4:invalid hex:fd bf bf bf bf:nothing:EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
-# 123 <ef 80>
+# 0->3->2-1, 123 <ef 80>
 19.5:invalid hex:31 32 33 ef 80:31 32 33:31 32 33 EFBFBD
 
 # 123 <ef 80 f0>
 19.6:invalid hex:31 32 33 ef 80 f0:31 32 33:31 32 33 EFBFBD EFBFBD
-
-# 3.4  Concatenation of incomplete sequences
-
-# 3.5  Impossible bytes
-
-# Byte fe and ff cannot appear in UTF-8.
 
 # <80>
 21.0:invalid hex:80:nothing:EFBFBD
@@ -357,16 +366,12 @@
 # 7 8 9 <fe>
 21.6:invalid hex:37 38 39 fe:37 38 39:37 38 39 EFBFBD
 
-# # 4.1  Examples of an overlong ASCII / character.
+
+
+# === Overlong Characters ===
 
 # Overlong solidus has been abused before and is a potential
 # security issue.
-
-# U+002f, SOLIDUS
-22.0:valid:/
-
-# U+002f, SOLIDUS <2f>
-22.1:valid hex:2F
 
 # overlong solidus <c0 af>
 22.2:invalid hex:c0 af:nothing:EFBFBD EFBFBD
@@ -383,15 +388,10 @@
 # overlong solidus <fc 80 80 80 80 af>
 22.6:invalid hex:fc 80 80 80 80 af:nothing:EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
-# U+0800, <e0 a0 80>
-22.7:valid hex:e0 a0 80
-
-# # 4.2  Maximum overlong sequences
-
-# overlong U+0000007F <c1 bf>
+# max two byte overlong U+0000007F <c1 bf>
 23.0:invalid hex:c1 bf:nothing:EFBFBD EFBFBD
 
-# overlong U+000007FF <e0 9f bf>
+# max three byte overlong U+000007FF <e0 9f bf>
 23.1:invalid hex:e0 9f bf:nothing:EFBFBD EFBFBD EFBFBD
 
 # overlong U+0000FFFF <f0 8f bf bf>
@@ -400,7 +400,9 @@
 # overlong U+001FFFFF <f8 87 bf bf bf>
 23.3:invalid hex:f8 87 bf bf bf:nothing:EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
-# # 5.1 Single UTF-16 surrogates
+
+
+# === Surrogate Characters ===
 
 # 1 surrogate U+D800, <ed a0 80>
 24.0:invalid hex:ed a0 80:nothing:EFBFBD EFBFBD EFBFBD
@@ -429,8 +431,6 @@
 # 1 surrogate U+DFFF, <ed bf bf>
 24.7:invalid hex:ed bf bf:nothing:EFBFBD EFBFBD EFBFBD
 
-# 5.2 Paired UTF-16 surrogates
-
 # 2 surrogates U+D800 U+DC00, <eda080 edb080>
 25.0:invalid hex:ed a0 80 ed b0 80:nothing:EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
@@ -456,7 +456,8 @@
 25.7:invalid hex:ed af bf ed bf bf:nothing:EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD
 
 
-# Valid noncharacter code positions
+
+# === Valid Noncharacters ===
 
 # Page 90, section 3.4, Characters and Encoding:
 # "Normally a coded character sequence consists of a sequence of
@@ -620,9 +621,19 @@
 # U+10FFFF, <F4 8F BF BF>
 28.15:valid hex:F4 8F BF BF
 
+# valid noncharacter U+FFFF, <EF BF BF>
+36.9:valid hex:EF BF BF 3d EF BF BF 2e
 
-# These tests come from looking at the UTF-8 finite state diagram
-# for cases that enter the error state.
+# valid noncharacter U+FFFE, <EF BF BE>
+36.9.1:valid hex:EF BF BE 3d EF BF BE 2e
+
+
+
+# === Miscellaneous Byte Sequences ===
+
+# The following tests come from looking at the UTF-8 finite state diagram
+# for cases that enter the error state. They cover each arrow
+# going into the error state.
 
 # The transition from the start state 0 to error state 1 can happen
 # with bytes 80-c1, f5-ff.
@@ -658,7 +669,6 @@
 # <ff 20>
 29.9:invalid hex:ff 20:20:EFBFBD 20
 
-
 # The transition from the state 2 to state 1 can happen
 # with bytes 00-7f, c0-ff.
 
@@ -680,7 +690,6 @@
 # <df ff>
 30.7:invalid hex:df ff:nothing:EFBFBD EFBFBD
 
-
 # <e0 a0 7f>
 31.1:invalid hex:e0 80 7f:7f:EFBFBD  EFBFBD  7f
 
@@ -698,8 +707,6 @@
 
 # <ed 80 ff>
 32.3:invalid hex:ed 80 ff:nothing:EFBFBD EFBFBD
-
-
 
 # <f0 90 80 7f>
 33.1:invalid hex:f0 90 80 7f:7f:EFBFBD 7f
@@ -720,7 +727,6 @@
 # <f1 80 80 ff>
 34.3:invalid hex:f1 80 80 ff:nothing: EFBFBD EFBFBD
 
-
 # <f4 80 80 7f>
 35.1:invalid hex:f4 80 80 7f:7f: EFBFBD 7f
 
@@ -730,11 +736,52 @@
 # <f4 80 80 ff>
 35.3:invalid hex:f4 80 80 ff:nothing: EFBFBD EFBFBD
 
+# Example in the Unicode spec. Constraints on Conversion Processes, pg 126, section 3.9.
+9.1:invalid hex:C2 41 42:41 42:EFBFBD 41 42
+
+
+
+# === Browser Tests ===
+
+# The 36 numbered tests are designed so you can manually validate
+# them by looking at the result.  The left and right sides should
+# be the same. The first line shows you what the replacement
+# character looks like. It should be a black diamond with a white
+# question mark in it.
+
+# The replacement character.
+# replacement character=EFBFBD 3d EFBFBD 2e
+36.1: valid hex: 7265706C6163656D656E74206368617261637465723D EFBFBD 3d EFBFBD 2e
+
+# Invalid ff byte.
+36.2: invalid hex: EFBFBD 3d ff 2e : EFBFBD 3d 2e : EFBFBD 3d EFBFBD 2e
+
+# Invalid two byte sequence <e0 80>.
+36.3: invalid hex: EFBFBD EFBFBD 3d e0 80 2e : EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD 3d EFBFBD EFBFBD 2e
+
+# Invalid three byte sequence <f0 80 80>.
+36.4: invalid hex: EFBFBD EFBFBD EFBFBD 3d f0 80 80 2e : EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD 2e
+
+# Invalid three byte sequence followed by invalid bytes <f8 80 80 80>.
+36.5: invalid hex: EFBFBD EFBFBD EFBFBD EFBFBD 3d f0 80 80 80  2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD EFBFBD 2e
+
+# Invalid two byte sequence <e0 80> twice.
+36.6: invalid hex: EFBFBD EFBFBD EFBFBD EFBFBD 3d e0 80 e0 80 2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD EFBFBD 2e
+
+# too big U+001FFFFF, <F7 BF BF BF>
+36.7:invalid hex:EFBFBD EFBFBD EFBFBD EFBFBD 3d F7 BF BF BF 2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD EFBFBD 2e
+
+# 1 surrogate U+D800, <ed a0 80>
+36.8:invalid hex:EFBFBD EFBFBD EFBFBD 3d ed a0 80 2e : EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD 2e
+
+
+
+# === Null Characters ===
+
 
 # The null <00> byte is a valid ASCII and valid UTF-8 character.
 # It is often used to terminate a string in C type
 # languages. That is why these tests are at the end of the file.
-
 
 # U+00000000, null, <00>
 5.0:valid hex:00
@@ -766,45 +813,8 @@
 # <f4 80 80 00>
 35.0:invalid hex:f4 80 80 00:00: EFBFBD 00
 
-# The 36 tests are designed for browser and editors.
-# When viewing the left and right sides should be the same.
-
-# The replacement character.
-# replacement character=EFBFBD 3d EFBFBD 2e
-36.1: valid hex: 7265706C6163656D656E74206368617261637465723D EFBFBD 3d EFBFBD 2e
-
-# Invalid ff byte.
-36.2: invalid hex: EFBFBD 3d ff 2e : EFBFBD 3d 2e : EFBFBD 3d EFBFBD 2e
-
-# Invalid two byte sequence <e0 80>.
-36.3: invalid hex: EFBFBD EFBFBD 3d e0 80 2e : EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD 3d EFBFBD EFBFBD 2e
-
-# Invalid three byte sequence <f0 80 80>.
-36.4: invalid hex: EFBFBD EFBFBD EFBFBD 3d f0 80 80 2e : EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD 2e
-
-# Invalid three byte sequence followed by invalid bytes <f8 80 80 80>.
-36.5: invalid hex: EFBFBD EFBFBD EFBFBD EFBFBD 3d f0 80 80 80  2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD EFBFBD 2e
-
-# Invalid two byte sequence <e0 80> twice.
-36.6: invalid hex: EFBFBD EFBFBD EFBFBD EFBFBD 3d e0 80 e0 80 2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD EFBFBD 2e
-
-# too big U+001FFFFF, <F7 BF BF BF>
-36.7:invalid hex:EFBFBD EFBFBD EFBFBD EFBFBD 3d F7 BF BF BF 2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD EFBFBD 2e
-
-# 1 surrogate U+D800, <ed a0 80>
-36.8:invalid hex:EFBFBD EFBFBD EFBFBD 3d ed a0 80 2e : EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD 2e
-
-# valid noncharacter U+FFFF, <EF BF BF>
-36.9:valid hex:EF BF BF 3d EF BF BF 2e
-
-# valid noncharacter U+FFFE, <EF BF BE>
-36.9.1:valid hex:EF BF BE 3d EF BF BE 2e
-
 # overlong solidus <e0 80 af>
 36.10:invalid hex:EFBFBD EFBFBD EFBFBD 3d e0 80 af 2e : EFBFBD EFBFBD EFBFBD 3d 2e : EFBFBD EFBFBD EFBFBD 3d EFBFBD EFBFBD EFBFBD 2e
-
-
-# 0 over long tests.
 
 # 110xxxxx 10xxxxxx
 # 11000000 10000000
@@ -826,3 +836,6 @@
 
 # 0 in the middle, 20 00 20 <ff>
 37.3:invalid hex:20 00 20 ff:20 00 20:20 00 20 EFBFBD
+
+# 0 at the end, 20 00
+37.4:valid hex:20 00
