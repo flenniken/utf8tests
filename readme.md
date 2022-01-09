@@ -196,7 +196,7 @@ characters. They are characters with special properties.
 
 ## Invalid Byte Sequences
 
-When you are reading an UTF-8 encode file you need to determine how to
+When you are reading an UTF-8 encoded file you need to determine how to
 handle the invalid byte sequences. You could replace them with the
 replacement character U+FFFD, &lt;EF BF BD&gt; for this purpose.
 
@@ -244,13 +244,18 @@ it is not supported by the language.
 
 | Code  | Skip | Replace |
 | ----- | ---- | ------- |
+| Chrome 97.0.4692.71 | NA | ✅ pass<sup>v</sup> |
 | Emacs 25.3.1  | 🛑 fail | NA |
+| Firefox 95.0.2 | NA | ✅ pass<sup>v</sup> |
 | Iconv 1.11  | 🛑 fail | NA |
 | Nim 1.4.8 | 🛑 fail | NA |
 | Node js 17.2.0 | NA | ✅ pass |
 | Python 3.7.5 | ✅ pass | ✅ pass |
 | Perl 5.30.2 | NA | 🛑 fail |
 | Reference | ✅ pass | ✅ pass |
+| Safari 14.1.2 | NA | ✅ pass<sup>v</sup> |
+
+* v - tested visually with utf8browsertests.txt
 
 See the procedure page for the steps to reproduce the results shown in
 the table.

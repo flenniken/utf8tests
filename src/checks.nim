@@ -13,6 +13,7 @@ const
   testCases* = "utf8tests.txt"
   binTestCases* = "utf8tests.bin"
   browserTestCases* = "utf8browsertests.txt"
+  htmlTestCases* = "utf8tests.html"
 
 type
   WriteValidUtf8File* = proc (inFilename, outFilename: string,
@@ -272,6 +273,50 @@ proc createUtf8testsBinFile*(resultFilename: string, forBrowsers = false): strin
     else:
       lineType = "invalid"
     resultFile.write(fmt"{testLine.numStr}:{lineType}:{testLine.testCase}"&"\n")
+
+proc createUtf8testsHtmlFile*(resultFilename: string): string =
+  ## Create an html file from the utf8tests.txt file.
+
+  # Read the test cases file into an ordered dictionary.
+  let tableOr = readTestCasesFile(testCases)
+  if tableOr.isMessage:
+    return tableOr.message
+  let table = tableOr.value
+
+  var resultFile: File
+  if not open(resultFile, resultFilename, fmWrite):
+    return "Unable to open the file: " & resultFilename
+  defer:
+    resultFile.close()
+
+  let header = """
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>utf8tests.html</title></head>
+<body>
+<h1>utf8tests.html</h1>
+<p>UTF-8 test cases, both valid and invalid sequences. See:<br>
+<a href="https://github.com/flenniken/utf8tests">https://github.com/flenniken/utf8tests</a>
+</p>
+<pre>
+"""
+  let footer = """
+</pre>
+</body>
+</html>
+"""
+  resultFile.write(header)
+
+  for testLine in table.values:
+    var lineType: string
+    if testLine.valid:
+      lineType = "valid"
+    else:
+      lineType = "invalid"
+    resultFile.write(fmt"{testLine.numStr}:{lineType}:{testLine.testCase}"&"\n")
+
+  resultFile.write(footer)
 
 proc compareTables(eTable: OrderedTable[string, TestLine],
     gotTable: OrderedTable[string, TestLine],

@@ -36,6 +36,15 @@ suite "writevalidutf8file.nim":
       echo "run the tests again"
       fail()
 
+  test "generate utf8tests.html":
+    # Re-generate the utf8tests.html file when the utf8tests.txt file changes.
+    if not fileExists(htmlTestCases) or fileNewer(testCases, htmlTestCases):
+      echo "generating file: " & htmlTestCases
+      let msg = createUtf8testsHtmlFile(htmlTestCases)
+      check msg == ""
+      echo "run the tests again"
+      fail()
+
   test "generate artifacts":
     type
       Decoder = object
@@ -84,3 +93,4 @@ suite "writevalidutf8file.nim":
       elif rc == 0 and decoder.passOrFail == "fail":
         echo fmt"{decoder.name} {skipOrReplace} was expected to fail but it passed."
         fail()
+

@@ -1,8 +1,37 @@
 # Procedures
 
 This page tells how to reproduce the results shown in the readme's
-table for the code that fails. It also tells what failed and why it
-failed.
+table for the code that fails and for the browser tests. It also tells
+what failed and why it failed.
+
+* [Chrome 97.0.4692.71](#chrome-970469271) &mdash; Chrome
+* [Emacs 25.3.1](#emacs-2531) &mdash; Emacs
+* [Iconv 1.11](#iconv-111) &mdash; Iconv
+* [Firefox 95.0.2](#firefox-9502) &mdash; Firefox
+* [Nim 1.4.8](#nim-148) &mdash; Nim
+* [Perl 5.30.2](#perl-5302) &mdash; Perl
+* [Safari 14.1.2](#safari-1412) &mdash; Safari
+
+
+# Chrome 97.0.4692.71
+
+* Launch chrome
+* Open utf8browsertests.txt: File > Open File...
+
+The page looks as expected:
+~~~
+36.1:valid:replacement character=�=�.
+36.2:invalid:�=�.
+36.3:invalid:��=��.
+36.4:invalid:���=���.
+36.5:invalid:����=����.
+36.6:invalid:����=����.
+36.7:invalid:����=����.
+36.8:invalid:���=���.
+36.10:invalid:���=���.
+36.9:valid:￿=￿.
+36.9.1:valid:￾=￾.
+~~~
 
 # Emacs 25.3.1
 
@@ -136,6 +165,41 @@ __Steps to Reproduce__
 See the procedure writeValidUtf8FileIconv in the
 writevalidutf8file.nim file in this project.
 
+# Firefox 95.0.2
+
+I am not able to view the local utf8browsertest.txt file in Firefox as UTF-8.
+
+If you open utf8browsertests.txt in firefox, it shows it in
+windows-1252.
+
+* launch Firefox
+* open utf8browsertests.txt: File > Open File...
+* Tools > Page info.  
+
+The info page shows that the text encoding is windows-1252.
+
+The page looks like:
+~~~
+36.9:valid:ï¿¿=ï¿¿.
+36.9.1:valid:ï¿¾=ï¿¾.
+36.1:valid:replacement character=ï¿½=ï¿½.
+36.2:invalid:ï¿½=ÿ.
+36.3:invalid:ï¿½ï¿½=à€.
+36.4:invalid:ï¿½ï¿½ï¿½=ð€€.
+36.5:invalid:ï¿½ï¿½ï¿½ï¿½=ð€€€.
+36.6:invalid:ï¿½ï¿½ï¿½ï¿½=à€à€.
+36.7:invalid:ï¿½ï¿½ï¿½ï¿½=÷¿¿¿.
+36.8:invalid:ï¿½ï¿½ï¿½=í €.
+36.10:invalid:ï¿½ï¿½ï¿½=à€¯.
+~~~
+
+The following link says there used to be a menu pick to set the
+encoding.  It also says you can do it with about:config
+intl.charset.fallback.utf8_for_file setting but that does not work for
+me.
+
+[change-firefox-default-encoding-for-text-files](https://superuser.com/questions/1215064/change-firefox-default-encoding-for-text-files)
+
 # Nim 1.4.8:
 
 __Version Tested__
@@ -214,3 +278,25 @@ __Steps to Reproduce__
 
 See the procedure writeValidUtf8FilePerl in the
 writevalidutf8file.nim file in this project.
+
+# Safari 14.1.2
+
+* Launch safari: Version 14.1.2 (16611.3.10.1.6)
+* On utf8browsertests.txt: File > File Open...
+* View > Test Encoding > Unicode (UTF-8)
+
+The page look as expected:
+
+~~~
+36.1:valid:replacement character=�=�.
+36.2:invalid:�=�.
+36.3:invalid:��=��.
+36.4:invalid:���=���.
+36.5:invalid:����=����.
+36.6:invalid:����=����.
+36.7:invalid:����=����.
+36.8:invalid:���=���.
+36.10:invalid:���=���.
+36.9:valid:￿=￿.
+36.9.1:valid:￾=￾.
+~~~
