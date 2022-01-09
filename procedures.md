@@ -8,12 +8,12 @@ failed.
 
 Test the emacs text editor.
 
-## What failed?
+__What failed?__
 
 * Invalid UTF-8 byte sequences are written to a file when saving as
   utf-8.
 
-## Why it Failed?
+__Why it Failed?__
 
 The [Unicode
 Specification](https://www.unicode.org/versions/Unicode14.0.0/ch03.pdf)
@@ -21,31 +21,22 @@ says you must not write ill-formed byte sequences.
 
 Conformance, page 80, section 3.2:
 
-~~~
-C9
-When a process generates a code unit sequence which purports to be
+   >C9
+   >When a process generates a code unit sequence which purports to be
 in a Unicode character encoding form, it shall not emit ill-formed
 code unit sequences.
 
-The definition of each Unicode character encoding form specifies the
-ill-formed code unit sequences in the character encoding form. For
-example, the definition of UTF-8 (D92) specifies that code unit
-sequences such as <C0 AF> are ill-formed.
-~~~
-
 Conformance page 125, section 3.9:
 
-~~~
-A conformant encoding form conversion will treat any ill-formed code
+   >A conformant encoding form conversion will treat any ill-formed code
 unit sequence as an error condition. (See conformance clause C10.)
 This guarantees that it will neither interpret nor emit an ill-formed
 code unit sequence. Any implementation of encoding form conversion
 must take this requirement into account, because an encoding form
 conversion implicitly involves a verification that the Unicode strings
 being converted do, in fact, contain well-formed code unit sequences.
-~~~
 
-## Version Tested
+__Version Tested__
 
 Emacs 27.2 is the current version as of this writing. Maybe it is
 fixed in a new version?
@@ -55,7 +46,7 @@ GNU Emacs 25.3.1 (x86_64-apple-darwin16.7.0,
   NS appkit-1504.83 Version 10.12.6 (Build 16G29)) of 2017-10-08
 ~~~
 
-## Steps to Reproduce
+__Steps to Reproduce__
 
 * open a terminal, copy the test file and open the copy:
 
@@ -112,7 +103,7 @@ An example case:
 22.2:               got: c0 af
 ~~~
 
-## Commentary
+__Commentary__
 
 It is nice that emacs shows the invalid byte sequences in their
 original form when you open the file and that saving without editing
@@ -122,7 +113,7 @@ do when saving with a prompt: leave, remove, or replace?
 
 # Iconv 1.11:
 
-## Version Tested
+__Version Tested__
 
 This is an old version maybe it is fixed in a new version?
 
@@ -135,19 +126,19 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 Written by Bruno Haible.
 ~~~
 
-## What failed?
+__What failed?__
 
 * Iconv 1.11 allows characters over U+10FFFF.
 * Iconv 1.11 allows surrogates.
 
-## Steps to Reproduce
+__Steps to Reproduce__
 
 See the procedure writeValidUtf8FileIconv in the
 writevalidutf8file.nim file in this project.
 
 # Nim 1.4.8:
 
-## Version Tested
+__Version Tested__
 
 ~~~
 nim --version
@@ -159,38 +150,39 @@ git hash: 44e653a9314e1b8503f0fa4a8a34c3380b26fff3
 active boot switches: -d:release -d:danger
 ~~~
 
-## What Failed?
+__What Failed?__
 
 * Nim 1.4.8 allows characters over U+10FFFF.
 * Nim 1.4.8 allows surrogates.
 * Nim 1.4.8 allows over long sequences.
 
-## Steps to Reproduce
+__Steps to Reproduce__
 
 See the procedure writeValidUtf8FileNim in the
 writevalidutf8file.nim file in this project.
 
 # Perl 5.30.2:
 
-## What Failed?
+__What Failed?__
 
 * Perl 5.30.2 changes internal use characters to the replacement character.
 * Perl 5.30.2 replaces invalid sequence runs with one replacement
   character.
 
-## Why it Failed?
+__Why it Failed?__
 
 My interpertation of the specification is that it is invalid to
-replace noncharacters with the replacement character then Perl encodes
-text since the text could be for internal use.
+replace noncharacters with the replacement character when Perl encodes
+text since the text could be for internal use and stored.
 
-I don't understand when it is ever appropriate to replace with the
-replacement character even though it says that is best practices.
+I think the second paragraph "...replacing it with U+FFFD replacement
+character, to indicate the problem in the text" is talking about how
+to show these characters in an editor. Unicode fonts have box glyphs
+for the noncharacters which do a better job of indicating a problem.
 
 Special Areas and Format Characters, page 924, section 23.7 Noncharacters
 
-~~~
-Applications are free to use any of these noncharacter code points
+   >Applications are free to use any of these noncharacter code points
 internally. They have no standard interpretation when exchanged
 outside the context of internal use. However, they are not illegal in
 interchange, nor does their presence cause Unicode text to be
@@ -202,7 +194,7 @@ be seen as too finely drawn, ensures that noncharacters are correctly
 preserved when “interchanged” internally, as when used in strings in
 APIs, in other interprocess protocols, or when stored.
 
-If a noncharacter is received in open interchange, an application is
+   >If a noncharacter is received in open interchange, an application is
 not required to interpret it in any way. It is good practice,
 however, to recognize it as a noncharacter and to take appropriate
 action, such as replacing it with U+FFFD replacement character, to
@@ -212,14 +204,13 @@ potential security issues caused by deleting uninterpreted
 characters. (See conformance clause C7 in Section 3.2, Conformance
 Requirements, and Unicode Technical Report #36, “Unicode Security
 Considerations.”)
-~~~
 
 It is cool to replace runs of invalid characters with one replacement
 character and it does conform to the rules.  However, it is
 inconsitent with the current best paractices being promoted by the w2c
 and documented in the Unicode Specification.
 
-## Steps to Reproduce
+__Steps to Reproduce__
 
 See the procedure writeValidUtf8FilePerl in the
 writevalidutf8file.nim file in this project.
