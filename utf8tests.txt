@@ -1,6 +1,6 @@
 # == UTF-8 Test Cases ==
 
-# Updated on Fri Jan  7 22:37:47 UTC 2022
+# Updated on Sun Jan  9 01:50:00 UTC 2022
 
 # This file, utf8test.txt, contains test cases for testing UTF-8
 # decoders and validators.  You "compile" the file to generate
@@ -254,16 +254,16 @@
 14.3:invalid hex:ec20 ed20 ee20 ef20:20 20 20 20:EFBFBD 20 EFBFBD 20 EFBFBD 20 EFBFBD 20
 
 # Table 3-8. U+FFFD for Non-Shortest Form Sequences
-14.4.0:invalid:C0 AF E0 80 BF F0 81 82 41:41:EFBFBD 41
+14.4.0:invalid hex:C0 AF E0 80 BF F0 81 82 41:41:EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD 41
 
 # Table 3-9. U+FFFD for Ill-Formed Sequences for Surrogates
-14.4.1:invalid:ED A0 80 ED BF BF ED AF 41:41:EFBFBD 41
+14.4.1:invalid hex:ED A0 80 ED BF BF ED AF 41:41:EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD 41
 
 # Table 3-10. U+FFFD for Other Ill-Formed Sequences
-14.4.2:invalid:F4 91 92 93 FF 41 80 BF 42:42:EFBFBD 42
+14.4.2:invalid hex:F4 91 92 93 FF 41 80 BF 42:41 42:efbfbd efbfbd efbfbd efbfbd efbfbd 41 efbfbd efbfbd 42
 
 # Table 3-11. U+FFFD for Truncated Sequences
-14.5.1:invalid:E1 80 E2 F0 91 92 F1 BF 41:41:EFBFBD 41
+14.5.1:invalid hex:E1 80 E2 F0 91 92 F1 BF 41:41: EFBFBD EFBFBD EFBFBD EFBFBD 41
 
 # 3.2.3  All 8 first bytes of 4-byte sequences (0xf0-0xf7),
 #        each followed by a space character

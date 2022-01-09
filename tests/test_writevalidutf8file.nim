@@ -53,7 +53,7 @@ suite "writevalidutf8file.nim":
         passOrFail: passOrFail)
 
     let decoders = [
-      newDecoder("emacs.25.3.1", writeNothing, true, "skip", "pass"),
+      newDecoder("emacs.25.3.1", writeNothing, true, "replace", "fail"),
       newDecoder("iconv.1.11", writeValidUtf8FileIconv, false, "skip", "fail"),
       newDecoder("nim.1.4.8", writeValidUtf8FileNim, false, "skip", "fail"),
       newDecoder("nodejs.17.2.0", writeValidUtf8FileNodeJs, false, "replace", "pass"),
@@ -79,8 +79,8 @@ suite "writevalidutf8file.nim":
       rc = checkFile(binTestCases, artifactName, skipOrReplace, echoOut=false)
 
       if rc != 0 and decoder.passOrFail == "pass":
-        echo fmt"{decoder.name} failed the tests."
+        echo fmt"{decoder.name} {skipOrReplace} failed the tests."
         fail()
       elif rc == 0 and decoder.passOrFail == "fail":
-        echo fmt"{decoder.name} was expected to fail but it passed."
+        echo fmt"{decoder.name} {skipOrReplace} was expected to fail but it passed."
         fail()

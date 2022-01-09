@@ -169,6 +169,12 @@ suite "checks.nim":
       newTestLine(false, "6.1", "\xf8\x88\x80\x80\x80", "",
         "\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD"))
 
+  test "14.4.0":
+    let line = "14.4.0:invalid hex:C0 AF E0 80 BF F0 81 82 41:41:EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD EFBFBD 41"
+    check testParseInvalidHexLine(line,
+      newTestLine(false, "14.4.0", "\xC0\xAF\xE0\x80\xBF\xF0\x81\x82\x41", "\x41",
+"\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD\x41"))
+
   test "parseInvalidLine":
     check testParseInvalidLine("1:invalid:abc", newTestLine(false, "1", "abc"))
     check testParseInvalidLine("1.2:invalid:abc", newTestLine(false, "1.2", "abc"))
@@ -225,6 +231,7 @@ suite "checks.nim":
     if tableOr.isMessage:
       echo "Unable to read the file."
       echo tableOr.message
+      check "Error in the file" == ""
     check tableOr.isValue()
 
   test "createUtf8testsBinFile":
