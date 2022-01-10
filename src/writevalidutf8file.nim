@@ -5,7 +5,7 @@ import std/os
 import std/strutils
 import std/unicode
 import std/osproc
-import unicodes
+import utf8decoder
 
 proc fileExistsAnd50kEcho(filename: string): int =
   ## Return 0 when the file exists and it is less than 50K. Otherwise

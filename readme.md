@@ -122,7 +122,7 @@ up-to-date mac.
 ## Reference Decoder
 
 I ported Bjoern Hoehrmann's decoder to Nim for a reference
-implementation. You can find it in the src folder in the unicodes.nim
+implementation. You can find it in the src folder in the utf8decoder.nim
 file. Here is Bjoern's web page:
 
 * [Bjoern Hoehrmann Decoder](http://bjoern.hoehrmann.de/utf-8/decoder/dfa/)

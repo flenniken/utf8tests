@@ -1,6 +1,6 @@
 import std/unittest
 import std/unicode
-import unicodes
+import utf8decoder
 
 proc testSanitizeutf8Empty(str: string): bool =
   ## Test that the string does not have any valid UTF-8 bytes.
@@ -34,7 +34,7 @@ proc testSanitizeutf8(str: string, expected: string, skipOrReplace = "replace"):
     echo "expected: " & expected
     result = false
 
-suite "unicodes.nim":
+suite "utf8decoder.nim":
 
   test "sanitizeUtf8":
     check sanitizeUtf8("happy path", "skip") == "happy path"
