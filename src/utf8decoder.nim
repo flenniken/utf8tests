@@ -1,4 +1,4 @@
-## Functions that deal with Unicode.
+## Functions for decoding and validating UTF-8.
 
 # copyright notice:
 
