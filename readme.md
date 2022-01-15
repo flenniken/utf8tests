@@ -155,13 +155,39 @@ Important UTF-8 facts for testing:
 ## Bit Patterns
 
 Below we show the bit patterns for 1 to 4 byte UTF-8 code point
-sequences. The one byte characters all have the high bit 0.
+sequences. The one byte characters all have the high bit 0. The
+unicode values from U+0080 to U+07FF are encoded with two bytes, etc.
 
 ~~~
-0xxxxxxx
-110xxxxx 10xxxxxx
+    0    -  7F: 0xxxxxxx
+   80   -  7FF: 110xxxxx 10xxxxxx
+  800  -  FFFF: 1110xxxx 10xxxxxx 10xxxxxx
+10000 - 10FFFF: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+~~~
+
+For example, to encode U+B3F1 by hand you use three bytes because it is
+in the range 800 - FFFF.  The three byte pattern is:
+
+~~~
 1110xxxx 10xxxxxx 10xxxxxx
-11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+~~~
+
+You convert U+B3F1 to binary:
+
+~~~
+   B    3    F    1
+1011 0011 1111 0001
+~~~
+
+Then you move the bits into the pattern replacing the x's. U+B3F1 is
+encoded as EB 8F B1.
+
+~~~
+    1011   001111   110001
+1110xxxx 10xxxxxx 10xxxxxx
+--------------------------
+11101011 10001111 10110001
+EB       8F       B1
 ~~~
 
 Binary to hex table:
