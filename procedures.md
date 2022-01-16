@@ -222,7 +222,7 @@ __What Failed?__
 
 __Why it Failed?__
 
-My interpertation of the specification is that it is invalid to
+My interpretation of the specification is that it is invalid to
 replace noncharacters with the replacement character when Perl encodes
 text since the text could be for internal use and stored.
 
