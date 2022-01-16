@@ -11,21 +11,21 @@ applications.
 
 ## Test Cases
 
-You can find the source code for test cases in the utf8test.txt
+You can find the source code for test cases in the utf8tests.txt
 file. This file gets compiled to utf8tests.bin and
-utf8browsertests.txt which you use for your testing.
+utf8tests.html which you use for your testing.
 
 * utf8tests.txt -- test cases; the source code for the next two files
-* utf8test.bin -- a binary file containing valid and invalid UTF-8 byte sequences
-* utf8browsertests.txt -- a file for visually testing browsers
+* utf8tests.bin -- a binary file containing valid and invalid UTF-8 byte sequences
+* utf8tests.html -- a file for visually testing browsers and text editors
 
 We are testing an application's UTF-8 reading and writing by sending
-the utf8test.bin text file through it then checking the resulting
+the utf8tests.bin text file through it then checking the resulting
 file.
 
 ~~~
              read       write               read
-utf8test.bin —--> (app) —---> artifact file --—> (utf8tests app)
+utf8tests.bin —--> (app) —---> artifact file --—> (utf8tests app)
 ~~~
 
 You can visually test the reading part with the utf8browerstest.txt
@@ -33,7 +33,7 @@ file.  It contains the tests numbered 36.x from the test cases file.
 
 ~~~
                     read
-utf8browerstest.txt --—> (app)
+utf8tests.html --—> (app)
 ~~~
 
 # Test Groups
@@ -52,7 +52,7 @@ The test file groups the tests into these categories:
 ## Test Your Decoder
 
 You can run the utf8tests.bin file through your decoder then check its
-output against the expected output shown in the utf8test.txt file. You
+output against the expected output shown in the utf8tests.txt file. You
 can do this automatically by passing your artifact file to utf8tests
 command line app.
 
@@ -62,7 +62,7 @@ example you convert from UTF-8 to UTF-8.
 
 __Generate an Artifact__:
 
-You tell iconv to read the utf8test.bin file and write it to an
+You tell iconv to read the utf8tests.bin file and write it to an
 artifacts file called utf8.skip.icon.txt. The -c option tells iconv to
 skip invalid byte sequences.
 
@@ -108,7 +108,7 @@ it allows surrogates. Here is a sample of the output:
 The utf8tests.txt file has comments telling what the test does. Below
 is the 6.0 test and its comment.  The 6.0 test expects the invalid
 byte sequence F7 BF BF BF to produce nothing in the artifact file when
-you are skipping. The utf8test.txt file describes the test line format
+you are skipping. The utf8tests.txt file describes the test line format
 in detail.
 
 ~~~
@@ -281,7 +281,7 @@ it is not supported by the language.
 | Reference | ✅ pass | ✅ pass |
 | Safari 14.1.2 | NA | ✅ pass<sup>v</sup> |
 
-* v - tested visually with utf8browsertests.txt
+* v - tested visually with utf8tests.html
 
 See the procedure page for the steps to reproduce the results shown in
 the table.

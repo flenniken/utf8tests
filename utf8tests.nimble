@@ -48,7 +48,7 @@ proc get_test_module_cmd(filename: string, release = false): string =
 task n, "\tShow available tasks.":
   exec "nimble tasks"
 
-task b, "\tBuild the utf8test app.":
+task b, "\tBuild the utf8tests app.":
   buildExe()
 
 task test, "\tRun one or more tests; specify part of test filename.":

@@ -27,23 +27,12 @@ suite "writevalidutf8file.nim":
       echo "run the tests again"
       fail()
 
-  test "generate utf8browser.txt":
-    # Re-generate the utf8BrowserTests.txt file when the utf8tests.txt file changes.
-    if not fileExists(browserTestCases) or fileNewer(testCases, browserTestCases):
-      echo "generating file: " & browserTestCases
-      let msg = createUtf8testsBinFile(browserTestCases, true)
-      check msg == ""
-      echo "run the tests again"
-      fail()
-
   test "generate utf8tests.html":
     # Re-generate the utf8tests.html file when the utf8tests.txt file changes.
     if not fileExists(htmlTestCases) or fileNewer(testCases, htmlTestCases):
       echo "generating file: " & htmlTestCases
       let msg = createUtf8testsHtmlFile(htmlTestCases)
       check msg == ""
-      echo "run the tests again"
-      fail()
 
   test "generate artifacts":
     type

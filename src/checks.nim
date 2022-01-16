@@ -12,7 +12,6 @@ import opresult
 const
   testCases* = "utf8tests.txt"
   binTestCases* = "utf8tests.bin"
-  browserTestCases* = "utf8browsertests.txt"
   htmlTestCases* = "utf8tests.html"
 
 type
@@ -21,7 +20,7 @@ type
     ## Procedure prototype for sanitizing a UTF-8 file.
 
   TestLine* = object
-    ## TestLine holds the information from a utf8test.txt test line.
+    ## TestLine holds the information from a utf8tests.txt test line.
     valid*: bool  # valid line type or invalid line type.
     numStr*: string  # test number string
     testCase*: string # test byte sequence
@@ -241,7 +240,7 @@ proc readTestCasesFile*(filename: string, readIgnore = false):
 
   result = newOpResultTestLines(dict)
 
-proc createUtf8testsBinFile*(resultFilename: string, forBrowsers = false): string =
+proc createUtf8testsBinFile*(resultFilename: string): string =
   ## Create a bin file from the utf8tests.txt file. The bin
   ## file has two types of lines, valid lines and invalid lines.  If
   ## there is an error, return a message telling what went wrong.
@@ -263,10 +262,6 @@ proc createUtf8testsBinFile*(resultFilename: string, forBrowsers = false): strin
     resultFile.close()
 
   for testLine in table.values:
-    # The 36 numbered tests are for browsers and editors.
-    if forBrowsers:
-      if not testLine.numStr.startsWith("36."):
-        continue
     var lineType: string
     if testLine.valid:
       lineType = "valid"
@@ -293,7 +288,10 @@ proc createUtf8testsHtmlFile*(resultFilename: string): string =
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head><title>utf8tests.html</title></head>
+<head>
+  <meta charset="UTF-8">
+  <title>utf8tests.html</title>
+</head>
 <body>
 <h1>utf8tests.html</h1>
 <p>UTF-8 test cases, both valid and invalid sequences. See:<br>
