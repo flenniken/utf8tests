@@ -17,22 +17,21 @@ utf8tests.html which you use for your testing.
 
 * utf8tests.txt -- test cases; the source code for the next two files
 * utf8tests.bin -- a binary file containing valid and invalid UTF-8 byte sequences
-* utf8tests.html -- a file for visually testing browsers and text editors
+* utf8tests.html -- a file for visually testing html readers.
 
 We are testing an application's UTF-8 reading and writing by sending
 the utf8tests.bin text file through it then checking the resulting
 file.
 
 ~~~
-             read       write               read
+              read       write               read
 utf8tests.bin —--> (app) —---> artifact file --—> (utf8tests app)
 ~~~
 
-You can visually test the reading part with the utf8browerstest.txt
-file.  It contains the tests numbered 36.x from the test cases file.
+You can visually test the reading part with tests numbered 36.x.
 
 ~~~
-                    read
+               read
 utf8tests.html --—> (app)
 ~~~
 
@@ -46,7 +45,7 @@ The test file groups the tests into these categories:
 * Surrogate Characters
 * Valid Noncharacters
 * Miscellaneous Byte Sequences
-* Browser Tests
+* Visual Tests
 * Null Characters
 
 ## Test Your Decoder
@@ -118,6 +117,42 @@ in detail.
 
 My version of iconv is very old but it is the current version on an
 up-to-date mac.
+
+## Visual Tests
+
+For applications that read UTF-8 but don't write it, you can test them
+with the visual tests numbered 36.x.
+
+The visual tests check:
+
+* 36.1: The replacement character.
+* 36.2: Invalid ff byte.
+* 36.3: Invalid two byte sequence <e0 80>.
+* 36.4: Invalid three byte sequence <f0 80 80>.
+* 36.5: Invalid three byte sequence followed by an invalid byte <f8 80 80 80>.
+* 36.6: Invalid two byte sequence <e0 80> twice.
+* 36.7: too big U+001FFFFF, <F7 BF BF BF>
+* 36.8: surrogate U+D800, <ed a0 80>
+* 36.10: overlong solidus <e0 80 af>
+* 36.9: valid noncharacter U+FFFF, <EF BF BF>
+* 36.9.1: valid noncharacter U+FFFE, <EF BF BE>
+
+This is what is expected when the reader replaces invalid bytes
+sequences with the replacement character:
+
+~~~
+36.1:valid:replacement character=�=�.
+36.2:invalid:�=�.
+36.3:invalid:��=��.
+36.4:invalid:���=���.
+36.5:invalid:����=����.
+36.6:invalid:����=����.
+36.7:invalid:����=����.
+36.8:invalid:���=���.
+36.10:invalid:���=���.
+36.9:valid:￿=￿.
+36.9.1:valid:￾=￾.
+~~~
 
 ## Reference Decoder
 
@@ -274,14 +309,17 @@ it is not supported by the language.
 | Emacs 25.3.1  | 🛑 fail | NA |
 | Firefox 95.0.2 | NA | ✅ pass<sup>v</sup> |
 | Iconv 1.11  | 🛑 fail | NA |
+| Less 487 | NA | ✅ pass<sup>v</sup> |
+| Nano 2.0.6 | NA | 🛑 fail |
 | Nim 1.4.8 | 🛑 fail | NA |
 | Node js 17.2.0 | NA | ✅ pass |
 | Python 3.7.5 | ✅ pass | ✅ pass |
 | Perl 5.30.2 | NA | 🛑 fail |
 | Reference | ✅ pass | ✅ pass |
 | Safari 14.1.2 | NA | ✅ pass<sup>v</sup> |
+| Vim 8.2.2029 | NA | 🛑 fail |
 
-* v - tested visually with utf8tests.html
+* v - visually tested using 36.x tests
 
 See the procedure page for the steps to reproduce the results shown in
 the table.

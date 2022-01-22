@@ -8,10 +8,13 @@ what failed and why it failed.
 * [Emacs 25.3.1](#emacs-2531) &mdash; Emacs
 * [Iconv 1.11](#iconv-111) &mdash; Iconv
 * [Firefox 95.0.2](#firefox-9502) &mdash; Firefox
+* [Less 487](#less-487) &mdash; Less
+* [Nano 2.0.6](#nano-206) &mdash; Nano
 * [Nim 1.4.8](#nim-148) &mdash; Nim
 * [Perl 5.30.2](#perl-5302) &mdash; Perl
 * [Safari 14.1.2](#safari-1412) &mdash; Safari
-
+* [Textedit 1.16](#textedit-116) &mdash; Textedit
+* [Vim 8.2.2029](#vim-822029) &mdash; Vim
 
 # Chrome 97.0.4692.71
 
@@ -187,6 +190,98 @@ The 36 tests look as expected:
 36.9.1:valid:￾=￾.
 ~~~
 
+# Less 487
+
+Less is a file viewer for the command line.
+
+__Version Tested__
+
+```
+less --version
+
+less 487 (POSIX regular expressions)
+Copyright (C) 1984-2016  Mark Nudelman
+
+less comes with NO WARRANTY, to the extent permitted by law.
+For information about the terms of redistribution,
+see the file named README in the less distribution.
+Homepage: http://www.greenwoodsoftware.com/less
+```
+
+__Visual Tests__
+
+Since Less does not write files we can only evaluate its UTF-8
+handling visually. It detects the invalid sequences and shows them a
+few different ways, so it passes.
+
+~~~
+36.1:valid:replacement character=�=�.
+36.2:invalid:�=<FF>.
+36.3:invalid:��=<E0><80>.
+36.4:invalid:���=<F0><80><80>.
+36.5:invalid:����=<F0><80><80><80>.
+36.6:invalid:����=<E0><80><E0><80>.
+36.7:invalid:����=????.
+36.8:invalid:���=<U+D800>.
+36.10:invalid:���=<E0><80><AF>.
+36.9:valid:￿=￿.
+36.9.1:valid:￾=￾.
+~~~
+
+# Nano 2.0.6
+
+Nano is a command line text editor.
+
+__Version Tested__
+
+```
+nano --version
+ GNU nano version 2.0.6 (compiled 22:22:48, Sep  5 2021)
+ Email: nano@nano-editor.org	Web: http://www.nano-editor.org/
+ Compiled options: --disable-nls --enable-color --enable-extra --enable-multibuffer --enable-nanorc --enable-utf8
+```
+
+__Steps to Reproduce__
+
+Open the artifact file, add "# edited in nano" to the top of the file
+then save it:
+
+~~~
+cp utf8tests.bin artifacts/utf8.replace.nano.2.0.6.txt
+nano artifacts/utf8.replace.nano.2.0.6.txt
+# edited in nano
+ctrl-x
+~~~
+
+Evaluate the artifact:
+
+~~~
+bin/utf8tests -e=utf8tests.txt -r=artifacts/utf8.replace.nano.2.0.6.txt | less
+~~~
+
+__What failed?__
+
+* nano writes invalid byte sequences to the file and leaves most of
+  the invalid bytes unchanged
+
+__Visual Tests__
+
+Here are the visual tests:
+
+~~~
+36.1:valid:replacement character=�=�.
+36.2:invalid:�=�.
+36.3:invalid:��= �.
+36.4:invalid:���=���.
+36.5:invalid:����=����.
+36.6:invalid:����= � �.
+36.7:invalid:����=����.
+36.8:invalid:���=���.
+36.10:invalid:���= ��.
+36.9:valid:�=�.
+36.9.1:valid:�=�.
+~~~
+
 # Nim 1.4.8:
 
 __Version Tested__
@@ -286,4 +381,92 @@ The 36 tests look as expected:
 36.10:invalid:���=���.
 36.9:valid:￿=￿.
 36.9.1:valid:￾=￾.
+~~~
+
+
+# Textedit 1.16
+
+Textedit is a GUI file editor on the mac.
+
+__Version Tested__
+
+~~~
+Version 1.16 (365.2)
+~~~
+
+Testedit application doesn't open the utf8test.bin file as UTF-8.  It
+shows the error message:
+
+~~~
+The document “utf8tests.bin” could not be opened. Text encoding
+Unicode (UTF-8) isn’t applicable.
+~~~
+
+# Vim 8.2.2029
+
+Vim is a command line text editor.
+
+Vim version:
+
+```
+vim --version
+VIM - Vi IMproved 8.2 (2019 Dec 12, compiled Sep  6 2021 01:30:12)
+macOS version
+Included patches: 1-2029
+Compiled by root@apple.com
+Normal version without GUI.
+...
+
+```
+
+__Steps to Reproduce__
+
+In your .vimrc, add "set encoding=utf-8":
+
+```
+vim ~/.vimrc
+set encoding=utf-8
+:wq
+```
+
+Make the vim artifact file.  Copy of the utf8test.bin file then edit the copy.   Run some encoding commands, add "# edited in vim" to the top of the file, then save the artifact file:
+
+```
+cp utf8tests.bin artifacts/utf8.replace.vim8.2.2029.txt
+vim artifacts/utf8.replace.vim8.2.2029.txt
+:e ++enc=utf-8
+:set fileencoding=utf-8
+# edited in vim
+:wq!
+```
+
+Evaluate the artifact just created:
+
+```
+bin/utf8tests -e=utf8tests.txt -s=artifacts/utf8.replace.vim8.2.2029.txt | less
+```
+
+__What Failed?__
+
+* vim allows too big characters
+* vim allows surrogate characters
+* vim allows overlong sequences
+* vim replaces invalid bytes with ? (3f)
+
+__Visual Tests__
+
+The visual tests:
+
+~~~
+36.1:valid:replacement character=�=�.
+36.2:invalid:�=?.
+36.3:invalid:��=??.
+36.4:invalid:���=???.
+36.5:invalid:����=<00>.
+36.6:invalid:����=????.
+36.7:invalid:����=????.
+36.8:invalid:���=<d800>.
+36.10:invalid:���=/.
+36.9:valid:<ffff>=<ffff>.
+36.9.1:valid:<fffe>=<fffe>.
 ~~~
