@@ -139,18 +139,3 @@ func utf8CharString*(str: string, pos: Natural): string =
     if state == 0:
       return result
   result = ""
-
-func utf8CodePoint*(str: string, pos: Natural): int =
-  ## Return the unicode code point at pos.  Return -1 when not a UTF-8
-  ## character.
-  if pos > str.len - 1:
-    return -1
-  var codePoint: uint32
-  var state: uint32 = 0
-  for sByte in str[pos .. str.len - 1]:
-    decode(state, codePoint, sByte)
-    if state == 0:
-      return int(codePoint)
-    if state == 12:
-      break
-  result = -1

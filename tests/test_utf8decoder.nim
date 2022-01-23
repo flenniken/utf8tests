@@ -74,35 +74,3 @@ suite "utf8decoder.nim":
     check utf8CharString("\xF0\x9D\x92\x9C", 3) == ""
 
     check utf8CharString("abc\xC2\xA9def", 4) == ""
-
-  test "utf8CodePoint":
-    check utf8CodePoint("\x00", 0) == 0
-    check utf8CodePoint("\x01", 0) == 1
-    check utf8CodePoint("\x7f", 0) == 0x7f
-    check utf8CodePoint("a", 0) == ord('a')
-    check utf8CodePoint("ab", 1) == ord('b')
-    check utf8CodePoint("abc", 2) == ord('c')
-
-    # COPYRIGHT SIGN, U+00A9, C2 A9 
-    check utf8CodePoint("\xC2\xA9", 0) == 0xA9
-
-    # HYPHEN, U+2010, E2 80 90
-    check utf8CodePoint("\xE2\x80\x90", 0) == 0x2010
-
-    # MATHEMATICAL SCRIPT CAPITAL A, U+1D49C, F0 9D 92 9C 
-    check utf8CodePoint("\xF0\x9D\x92\x9C", 0) == 0x1D49C
-
-    # U+10FFFF, biggest code point, <F4 8F BF BF>
-    check utf8CodePoint("\xF4\x8F\xBF\xBF", 0) == 0x10FFFF
-
-    check utf8CodePoint("\xE2\x80\x90\xC2\xA9", 3) == 0xA9
-
-  test "utf8CodePoint error":
-    check utf8CodePoint("", 0) == -1
-    check utf8CodePoint("a", 1) == -1
-    check utf8CodePoint("ab", 2) == -1
-
-    check utf8CodePoint("\xC2\xA9", 1) == -1
-    check utf8CodePoint("a\xC2\xA9", 2) == -1
-    check utf8CodePoint("a\xC2\xA9b", 2) == -1
-
