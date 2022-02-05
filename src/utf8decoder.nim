@@ -38,7 +38,7 @@ const
     12,36,12,12,12,12,12,12,12,12,12,12,
   ]
 
-proc decode(state: var uint32, codep: var uint32, sByte: char) =
+proc decode*(state: var uint32, codep: var uint32, sByte: char) =
   ## Interior part of a UTF-8 decoder.
 
   let ctype = uint32(utf8d[uint8(sByte)])

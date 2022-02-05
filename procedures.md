@@ -307,6 +307,10 @@ __Steps to Reproduce__
 See the procedure writeValidUtf8FileNim in the
 writevalidutf8file.nim file in this project.
 
+See Nim Issue:
+
+https://github.com/nim-lang/Nim/issues/19333
+
 # Perl 5.30.2:
 
 __What Failed?__
