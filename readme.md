@@ -255,6 +255,8 @@ characters. They are characters with special properties.
 * n -- "noncharacters" is part of C.
 * not C -- terminates at state 1. These are the invalid byte sequences.
 
+* [Corrigendum9](http://www.unicode.org/versions/corrigendum9.html) -- Unicode: Corrigendum #9: Clarification About Noncharacters
+
 ## Invalid Byte Sequences
 
 When you are reading an UTF-8 encoded file you need to determine how to

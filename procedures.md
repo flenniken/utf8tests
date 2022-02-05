@@ -365,6 +365,10 @@ __Steps to Reproduce__
 See the procedure writeValidUtf8FilePerl in the
 writevalidutf8file.nim file in this project.
 
+Perl issue:
+* [Perl Encode](https://github.com/dankogai/p5-encode/issues/156) &mdash; Perl encode issue 156.
+
+
 # Safari 14.1.2
 
 * Launch safari: Version 14.1.2 (16611.3.10.1.6)
