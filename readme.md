@@ -187,6 +187,15 @@ Important UTF-8 facts for testing:
 * One byte UTF-8 characters are ASCII characters, 0 - 7f.
 * The surrogate characters are not valid in UTF-8.
 
+## Surrogate Characters
+
+The surrogate characters are not valid in UTF-8.  The high surrogate
+range from U+D800 to U+DBFF. The low surrogate range from U+DC00 to
+U+DFFF.
+
+* U+D800 to U+DBFF -- high surrogates
+* U+DC00 to U+DFFF -- low surrogates
+
 ## Bit Patterns
 
 Below we show the bit patterns for 1 to 4 byte UTF-8 code point
