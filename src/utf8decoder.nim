@@ -48,30 +48,57 @@ proc decode*(state: var uint32, codep: var uint32, sByte: char) =
     codep = (0xffu32 shr ctype) and uint32(sByte)
   state = utf8d[256 + state + ctype]
 
+iterator yieldUtf8Chars*(str: string, ixStartSeq: var int,
+    ixEndSeq: var int, codePoint: var uint32): bool =
+  ## Iterate through the string's UTF-8 character byte sequences.
+  ## @:For each character set ixStartSeq, ixEndSeq, and codePoint.
+  ## @:Return true when the bytes sequence is valid else return false.
+  ## @:
+  ## @:You can get the current byte sequence with:
+  ## @:str[ixStartSeq .. ixEndSeq]
+  ## @:
+  ## @:A UTF-8 character is a one to four byte sequence.
+
+  ixStartSeq = 0
+  ixEndSeq = 0
+  codePoint = 0
+  var state = 0u32
+  while true:
+    if ixEndSeq >= str.len:
+      break
+    decode(state, codePoint, str[ixEndSeq])
+
+    case state:
+    of 0:
+      yield true
+      inc(ixEndSeq)
+      ixStartSeq = ixEndSeq
+    of 12:
+      if ixEndSeq > ixStartSeq:
+        # Restart at the byte that broke a multi-byte sequence.
+        dec(ixEndSeq)
+      codePoint = 0
+      yield false
+      inc(ixEndSeq)
+      ixStartSeq = ixEndSeq
+      state = 0
+    else:
+      inc(ixEndSeq)
+
+  if state != 0:
+    yield false
+
 func validateUtf8String*(str: string): int =
   ## Return the position of the first invalid UTF-8 byte in the string
   ## else return -1.
 
-  var codePoint: uint32 = 0
-  var state: uint32 = 0
-  var byteCount = 0
-  var ix: int
-
-  for sByte in str:
-    decode(state, codePoint, sByte)
-    if state == 12:
-      break
-    if state == 0:
-      byteCount = 0
-    else:
-      inc(byteCount)
-    inc(ix)
-
-  if state != 0:
-    result = ix - byteCount
-    assert result >= 0
-  else:
-    result = -1
+  var ixStartSeq: int
+  var ixEndSeq: int
+  var codePoint: uint32
+  for valid in yieldUtf8Chars(str, ixStartSeq, ixEndSeq, codePoint):
+    if not valid:
+      return ixStartSeq
+  result = -1
 
 func sanitizeUtf8*(str: string, skipOrReplace: string = "replace"): string =
   ## Sanitize and return the UTF-8 string. The skipOrReplace parameter
@@ -80,62 +107,26 @@ func sanitizeUtf8*(str: string, skipOrReplace: string = "replace"): string =
 
   let skipInvalid = if skipOrReplace == "skip": true else: false
 
-  const
-    replacementChar = "\uFFFD"
-
-  var codePoint: uint32 = 0
-  var state: uint32 = 0
-
-  # String index to the first byte of the current character.
-  var ixChar = 0
-
-  # Reserve space for the result string the same size as the input string.
-  result = newStringOfCap(str.len)
-
-  # Loop through the string bytes.
-  var ix = 0
-  while true:
-    if ix >= str.len:
-      if state != 0:
-        # We got to the end of the string but did not finish with a
-        # valid character.
-        if not skipInvalid:
-          result.add(replacementChar)
-      break # all done
-
-    # Process the string byte.
-    let sByte = str[ix]
-    decode(state, codePoint, sByte)
-
-    # Handle an invalid byte sequence.
-    if state == 12:
-      if not skipInvalid:
-        result.add(replacementChar)
-      # Restart at the byte that broke a multi-byte sequence.
-      state = 0
-      if ix - ixChar == 0:
-        inc(ix)
-      ixChar = ix
-      continue
-
-    # Add the valid character to the result string.
-    if state == 0:
-      result.add(str[ixChar .. ix])
-      ixChar = ix + 1
-    inc(ix)
+  var ixStartSeq: int
+  var ixEndSeq: int
+  var codePoint: uint32
+  for valid in yieldUtf8Chars(str, ixStartSeq, ixEndSeq, codePoint):
+    if valid:
+      result.add(str[ixStartSeq .. ixEndSeq])
+    elif not skipInvalid:
+      result.add("\uFFFD")
 
 func utf8CharString*(str: string, pos: Natural): string =
   ## Get the unicode character at pos.  Return a one character
   ## string. Return "" when not a UTF-8 character.
   if pos > str.len - 1:
     return
+
+  var ixStartSeq: int
+  var ixEndSeq: int
   var codePoint: uint32
-  var state: uint32 = 0
-  for sByte in str[pos .. str.len - 1]:
-    decode(state, codePoint, sByte)
-    if state == 12:
+  for valid in yieldUtf8Chars(str[pos .. str.len-1], ixStartSeq, ixEndSeq, codePoint):
+    if valid:
+      return str[pos+ixStartSeq .. pos+ixEndSeq]
+    else:
       return ""
-    result.add(char(sByte))
-    if state == 0:
-      return result
-  result = ""
