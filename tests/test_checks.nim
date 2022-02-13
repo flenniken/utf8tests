@@ -4,12 +4,6 @@ import std/strformat
 import opresult
 import checks
 
-proc createFile(filename: string, content: string) =
-  ## Create a file with the given content.
-  var file = open(filename, fmWrite)
-  file.write(content)
-  file.close()
-
 proc compareTestLineEcho*(testLine: TestLine, eTestLine: TestLine): bool =
   ## Compare to TestLine objects and show the differences. Return true
   ## when equal.

@@ -316,54 +316,23 @@ https://github.com/nim-lang/Nim/issues/19333
 __What Failed?__
 
 * Perl 5.30.2 changes internal use characters to the replacement character.
-* Perl 5.30.2 replaces invalid sequence runs with one replacement
-  character.
+* Perl 5.30.2 replaces some invalid sequence inconsistent with current best practices.
 
 __Why it Failed?__
 
-My interpretation of the specification is that it is invalid to
-replace noncharacters with the replacement character when Perl encodes
-text since the text could be for internal use and stored.
+It is invalid to replace noncharacters with the replacement character
+when Perl encodes text since the text could be for internal use and
+stored.
 
-I think the second paragraph "...replacing it with U+FFFD replacement
-character, to indicate the problem in the text" is talking about how
-to show these characters in an editor. Unicode fonts have box glyphs
-for the noncharacters which do a better job of indicating a problem.
-
-Special Areas and Format Characters, page 924, section 23.7 Noncharacters
-
-   >Applications are free to use any of these noncharacter code points
-internally. They have no standard interpretation when exchanged
-outside the context of internal use. However, they are not illegal in
-interchange, nor does their presence cause Unicode text to be
-ill-formed.  The intent of noncharacters is that they are permanently
-prohibited from being assigned interchangeable meanings by the Unicode
-Standard. They are not prohibited from occurring in valid Unicode
-strings which happen to be interchanged. This distinction, which might
-be seen as too finely drawn, ensures that noncharacters are correctly
-preserved when “interchanged” internally, as when used in strings in
-APIs, in other interprocess protocols, or when stored.
-
-   >If a noncharacter is received in open interchange, an application is
-not required to interpret it in any way. It is good practice,
-however, to recognize it as a noncharacter and to take appropriate
-action, such as replacing it with U+FFFD replacement character, to
-indicate the problem in the text. It is not recommended to simply
-delete noncharacter code points from such text, because of the
-potential security issues caused by deleting uninterpreted
-characters. (See conformance clause C7 in Section 3.2, Conformance
-Requirements, and Unicode Technical Report #36, “Unicode Security
-Considerations.”)
-
-It is cool to replace runs of invalid characters with one replacement
-character and it does conform to the rules.  However, it is
-inconsitent with the current best paractices being promoted by the w2c
-and documented in the Unicode Specification.
+Perl conforms how it replaces invalid byte sequences, but it is
+inconsistent with current best practices.  See the readme section
+"Invalid Byte Sequences" for more information.
 
 __Steps to Reproduce__
 
-See the procedure writeValidUtf8FilePerl in the
-writevalidutf8file.nim file in this project.
+See the procedure writeValidUtf8FilePerl in the writevalidutf8file.nim
+file in this project and the "Perl tests" section in
+test_writevalidutf8file.nim.
 
 Perl issue:
 * [Perl Encode](https://github.com/dankogai/p5-encode/issues/156) &mdash; Perl encode issue 156.

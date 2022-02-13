@@ -390,3 +390,9 @@ proc checkFile*(expectedFilename: string, gotFilename: string,
     echo lines.join("\n")
   if lines.len > 0:
     result = 1
+
+proc createFile*(filename: string, content: string) =
+  ## Create a file with the given content.
+  var file = open(filename, fmWrite)
+  file.write(content)
+  file.close()

@@ -6,6 +6,38 @@ import std/unicode
 import writevalidutf8file
 import checks
 import utf8decoder
+import opresult
+
+proc testPerlDecodeEcho(hexStr: string, eHexStr: string): bool =
+  ## Test Perl decoding a string. If the decoded string does not equal
+  ## the expected string show the result to the screen.
+
+  let inFilename = "perlReplacementTests.txt"
+  let outFilename = "perlOut.txt"
+
+  let strOr = hexToString(hexStr)
+  if strOr.isMessage:
+    echo strOr.message
+    return false
+  let str = strOr.value
+
+  let eStrOr = hexToString(eHexStr)
+  if eStrOr.isMessage:
+    echo eStrOr.message
+    return false
+  let eStr = eStrOr.value
+
+  createFile(inFilename, str)
+  check writeValidUtf8FilePerl(inFilename, outFilename) == 0
+  let outContents = readFile(outFilename)
+  if outContents != eStr:
+    echo "Perl decode: " & hexStr
+    echo "expected: " & eHexStr
+    echo "     got: " & stringToHex(outContents)
+    echo ""
+  discard tryRemoveFile(inFilename)
+  discard tryRemoveFile(outFilename)
+
 
 suite "writevalidutf8file.nim":
 
@@ -30,23 +62,23 @@ suite "writevalidutf8file.nim":
 
     # too big  110000, <F4 90 80 80>
     if validateUtf8("\xf4\x90\x80\x80") != 0:
-      echo "validateUtf8 allows U+110000"
+      echo "Nim validateUtf8 allows U+110000"
 
     # too big U+00200000, <f8 88 80 80 80>
     if validateUtf8("\xf8\x88\x80\x80\x80") != 0:
-      echo "validateUtf8 allows U+00200000"
+      echo "Nim validateUtf8 allows U+00200000"
 
     # too big U+03FFFFFF, <F7 BF BF BF BF>
     if validateUtf8("\xF7\xBF\xBF\xBF\xBF") != 0:
-      echo "validateUtf8 allows U+03FFFFFF"
+      echo "Nim validateUtf8 allows U+03FFFFFF"
 
     # too big U+04000000, <fc 84 80 80 80 80>
     if validateUtf8("\xfc\x84\x80\x80\x80\x80") != 0:
-      echo "validateUtf8 allows U+04000000"
+      echo "Nim validateUtf8 allows U+04000000"
 
     # too big U+7FFFFFFF, <F7 BF BF BF BF BF>
     if validateUtf8("\xF7\xBF\xBF\xBF\xBF\xBF") != 0:
-      echo "validateUtf8 allows U+7FFFFFFF"
+      echo "Nim validateUtf8 allows U+7FFFFFFF"
 
   test "validateUtf8 surrogates":
 
@@ -56,13 +88,13 @@ suite "writevalidutf8file.nim":
     # 1 surrogate U+D800, <ed a0 80>
 
     if validateUtf8("\xed\xa0\x80") != 0:
-      echo "validateUtf8 allows surrogate U+D800"
+      echo "Nim validateUtf8 allows surrogate U+D800"
     if validateUtf8("\xED\xAF\xBF") != 0:
-      echo "validateUtf8 allows surrogate U+DBFF"
+      echo "Nim validateUtf8 allows surrogate U+DBFF"
     if validateUtf8("\xED\xB0\x80") != 0:
-      echo "validateUtf8 allows surrogate U+DC00"
+      echo "Nim validateUtf8 allows surrogate U+DC00"
     if validateUtf8("\xED\xBF\xBF") != 0:
-      echo "validateUtf8 allows surrogate U+DFFF"
+      echo "Nim validateUtf8 allows surrogate U+DFFF"
 
   test "validateUtf8 overlong":
     # overlong solidus <c0 af>
@@ -70,21 +102,21 @@ suite "writevalidutf8file.nim":
 
     # overlong solidus <e0 80 af>
     if validateUtf8("\xe0\x80\xaf") == -1:
-      echo "validateUtf8 allows overlong solidus 2"
+      echo "Nim validateUtf8 allows overlong solidus 2"
 
     if validateUtf8("\xf0\x80\x80\xaf") == -1:
-      echo "validateUtf8 allows overlong solidus 3"
+      echo "Nim validateUtf8 allows overlong solidus 3"
 
     # overlong solidus <f8 80 80 80 af>
     let str4 = "\xf0\x80\x80\x80\xaf"
     if validateUtf8(str4) != 0:
-      echo "validateUtf8 allows overlong solidus 4"
+      echo "Nim validateUtf8 allows overlong solidus 4"
     check validateUtf8String(str4) == 0
 
     # overlong solidus <fc 80 80 80 80 af>
     let str5 = "\xf0\x80\x80\x80\x80\xaf"
     if validateUtf8(str5) != 0:
-      echo "validateUtf8 allows overlong solidus 5"
+      echo "Nim validateUtf8 allows overlong solidus 5"
     check validateUtf8String(str5) == 0
 
   test "$ - runes to string":
@@ -93,10 +125,10 @@ suite "writevalidutf8file.nim":
     # U+D800 to U+DBFF -- high surrogates
     # U+DC00 to U+DFFF -- low surrogates
     if $(@[Rune(0xD800)]) == "\uD800":
-      echo "$ allows surrogates"
+      echo "Nim unicode $ allows surrogates"
 
     # Rune too big.
-    echo stringToHex($(@[Rune(0x110000)]))
+    echo "Nim Rune allows rune 0x110000: " & stringToHex($(@[Rune(0x110000)]))
 
 
   test "sanitizeUtf8Nim":
@@ -174,3 +206,48 @@ suite "writevalidutf8file.nim":
       elif rc == 0 and decoder.passOrFail == "fail":
         echo fmt"{decoder.name} {skipOrReplace} was expected to fail but it passed."
         fail()
+
+  test "consistent replacement":
+    check sanitizeUtf8("") == ""
+    check sanitizeUtf8("a") == "a"
+    check sanitizeUtf8("ab") == "ab"
+    check sanitizeUtf8("abc") == "abc"
+    check sanitizeUtf8("\xff") == "\ufffd"
+    check sanitizeUtf8("\xffa") == "\ufffda"
+    check sanitizeUtf8("a\xff") == "a\ufffd"
+    check sanitizeUtf8("\xff\xff") == "\ufffd\ufffd"
+    check sanitizeUtf8("\xc2T") == "\ufffdT"
+    check sanitizeUtf8("\xe1\x80T") == "\ufffdT"
+    check sanitizeUtf8("\xf4\x80\x80T") == "\ufffdT"
+    check sanitizeUtf8("\xe0\xa0T") == "\ufffdT"
+
+    check sanitizeUtf8("\xff\xff\xff") == "\ufffd\ufffd\ufffd"
+    # echo "     got: " & stringToHex(sanitizeUtf8("\xf1\x80\xf3\x80\x80\xc2\x80T"))
+    check sanitizeUtf8("\xf1\x80\xf3\x80\x80\xc2\x80T") == "\ufffd\ufffd\xc2\x80T"
+
+  test "Perl tests":
+    let testCases = [
+      ["e0 80 7f", "ef bf bd ef bf bd 7f"],
+      ["e0 80 80", "ef bf bd ef bf bd ef bf bd"],
+      ["f0 80 80 80", "ef bf bd ef bf bd ef bf bd ef bf bd"],
+      ["ed ae 80 ed b0 80", "ef bf bd ef bf bd ef bf bd ef bf bd ef bf bd ef bf bd"],
+      ["f1 80 80 f4 80 80 c2 80", "ef bf bd ef bf bd c2 80"], # this one is ok
+      ["ef bf be", "ef bf be"], # U+FFFE
+    ]
+
+    # ed ae 80 ed b0 80
+    #
+    # ed ae is invalid
+    # ae is invalid
+    # 80 is invalid
+    # ed b0 is invalid
+    # b0 is invalid
+    # 80 is invalid
+
+    for testCase in testCases:
+      let hexStr = testCase[0]
+      let eHexStr = testCase[1]
+      let eHexStr2 = stringToHex(sanitizeUtf8(hexToString(hexStr).value))
+      check eHexStr == eHexStr2
+
+      discard testPerlDecodeEcho(hexStr, eHexStr)
