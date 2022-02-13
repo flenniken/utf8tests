@@ -307,9 +307,10 @@ __Steps to Reproduce__
 See the procedure writeValidUtf8FileNim in the
 writevalidutf8file.nim file in this project.
 
-See Nim Issue:
+See Nim Issues:
 
 https://github.com/nim-lang/Nim/issues/19333
+https://github.com/nim-lang/Nim/issues/19526
 
 # Perl 5.30.2:
 
@@ -336,7 +337,7 @@ test_writevalidutf8file.nim.
 
 Perl issue:
 * [Perl Encode](https://github.com/dankogai/p5-encode/issues/156) &mdash; Perl encode issue 156.
-
+* [Perl Replacement](https://github.com/dankogai/p5-encode/issues/166) &mdash; Perl encode issue 166.
 
 # Safari 14.1.2
 
