@@ -307,6 +307,10 @@ Many test cases in utf8tests.txt were inspired by Markus Kuhn tests. See:
 
 * [Markus Kuhn UTF-8 Tests](https://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt) -- UTF-8 decoder capability and stress test
 
+Daniel Lemire wrote a fast UTF-8 decoder and I enjoyed his paper:
+
+* [Unicode at Gigabytes per Second](https://arxiv.org/pdf/2111.08692.pdf)
+
 ## Results
 
 I tested a few languages, editors and browsers on my Mac. Each
