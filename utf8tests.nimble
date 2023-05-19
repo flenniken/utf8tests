@@ -2,7 +2,7 @@ import std/os
 import std/strutils
 import std/strformat
 
-version       = "0.1.2"
+version       = "0.1.3"
 author        = "Steve Flenniken"
 description   = "UTF-8 test cases and UTF-8 decoder."
 license       = "MIT"
