@@ -35,7 +35,7 @@ proc testYieldUtf8Char(str: string, eUtf8Chars: seq[string],
     var utf8Char: string
     try:
       utf8Char = str[ixStartChar .. ixEndChar]
-    except:
+    except CatchableError:
       echo "$1[u$2]" % [str, $ix]
       echo "ixStartChar: " & $ixStartChar
       echo "ixEndChar: " & $ixEndChar

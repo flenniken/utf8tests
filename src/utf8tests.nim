@@ -173,7 +173,7 @@ proc main(argv: seq[string]): int =
     if not argsO.isSome:
       return 1
     result = processArgs(argsO.get())
-  except:
+  except CatchableError:
     var message = "Unexpected exception: $1" % [getCurrentExceptionMsg()]
     # The stack trace is only available in the debug builds.
     when not defined(release):

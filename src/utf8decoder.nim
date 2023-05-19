@@ -51,13 +51,13 @@ proc decode*(state: var uint32, codep: var uint32, sByte: char) =
 iterator yieldUtf8Chars*(str: string, ixStartSeq: var int,
     ixEndSeq: var int, codePoint: var uint32): bool =
   ## Iterate through the string's UTF-8 character byte sequences.
-  ## @:For each character set ixStartSeq, ixEndSeq, and codePoint.
-  ## @:Return true when the bytes sequence is valid else return false.
-  ## @:
-  ## @:You can get the current byte sequence with:
-  ## @:str[ixStartSeq .. ixEndSeq]
-  ## @:
-  ## @:A UTF-8 character is a one to four byte sequence.
+  ## For each character set ixStartSeq, ixEndSeq, and codePoint.
+  ## Return true when the bytes sequence is valid else return false.
+  ##
+  ## You can get the current byte sequence with:
+  ## str[ixStartSeq .. ixEndSeq]
+  ##
+  ## A UTF-8 character is a one to four byte sequence.
 
   ixStartSeq = 0
   ixEndSeq = 0

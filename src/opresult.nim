@@ -1,22 +1,22 @@
 ## OpResult holds either a value or a message.  It's similar to
-## @:the Option type but instead of returning nothing, you return a
-## @:message that tells why you cannot return the value.
-## @:
-## @:Example Usage:
-## @:
-## @:~~~
-## @:proc test(): OpResult[int, string] =
-## @:  if problem:
-## @:    result = newOpResultMsg@{int, string}@("unable to do the task")
-## @:  else:
-## @:    result = newOpResult@{int, string}@(3)
-## @:
-## @:let numOr = test()
-## @:if numOr.isMessage():
-## @:  echo numOr.message
-## @:else:
-## @:  num = numOr.value
-## @:~~~~
+## the Option type but instead of returning nothing, you return a
+## message that tells why you cannot return the value.
+##
+## Example Usage:
+##
+## ~~~
+## proc test(): OpResult[int, string] =
+##   if problem:
+##     result = newOpResultMsg@{int, string}@("unable to do the task")
+##   else:
+##     result = newOpResult@{int, string}@(3)
+##
+## let numOr = test()
+## if numOr.isMessage():
+##   echo numOr.message
+## else:
+##   num = numOr.value
+## ~~~
 
 type
   OpResultKind = enum

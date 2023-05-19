@@ -1,14 +1,15 @@
 import std/os
 import std/strutils
+import std/strformat
 
-version       = "0.1.0"
+version       = "0.1.1"
 author        = "Steve Flenniken"
-description   = "UTF-8 test cases and supporting code."
+description   = "UTF-8 test cases and UTF-8 decoder."
 license       = "MIT"
 srcDir        = "src"
 bin           = @["bin/utf8tests"]
 
-requires "nim >= 1.4.8"
+requires "nim >= 1.6.12"
 
 proc buildExe() =
   let part1 = "nim c --gc:orc --hint[Performance]:off "
@@ -37,11 +38,17 @@ proc get_test_module_cmd(filename: string, release = false): string =
   else:
     rel = ""
 
-  let part1 = "nim c --gc:orc --verbosity:0 --hint[Performance]:off "
-  let part2 = "--hint[XCannotRaiseY]:off -d:test "
-  let part3 = "$1 -r -p:src --out:bin/$2 tests/$3" % [rel, binName, filename]
+  # The BareExcept is turned off because nim's unittest.nim(552, 5)
+  # generates it in version 1.6.12.
 
-  result = part1 & part2 & part3
+  result = fmt"""nim c --gc:orc --verbosity:0 \
+--hint[Performance]:off \
+--hint[XCannotRaiseY]:off -d:test \
+--warning[BareExcept]:off \
+{rel} \
+-r -p:src \
+--out:bin/{binName} \
+tests/{filename}"""
 
 # tasks below
 

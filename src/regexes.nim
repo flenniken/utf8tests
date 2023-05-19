@@ -106,7 +106,7 @@ func compilePattern(pattern: string): Option[Regex] =
   try:
     let regex = re(pattern)
     result = some(regex)
-  except:
+  except CatchableError:
     result = none(Regex)
 
 proc matchPatternCached*(str: string, pattern: string,

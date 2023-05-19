@@ -34,7 +34,7 @@ proc writeValidUtf8Ref*(inFilename: string, outFilename: string,
   var inData: string
   try:
     inData = readFile(inFilename)
-  except:
+  except CatchableError:
     echo "Unable to open and read the input file."
     return 1
 
@@ -45,7 +45,7 @@ proc writeValidUtf8Ref*(inFilename: string, outFilename: string,
   # Write the valid UTF-8 data to the output file.
   try:
     writeFile(outFilename, outData)
-  except:
+  except CatchableError:
     echo "Unable to open and write the output file."
     return 1
 
@@ -118,7 +118,7 @@ proc writeValidUtf8FileNim*(inFilename: string, outFilename: string,
   var inData: string
   try:
     inData = readFile(inFilename)
-  except:
+  except CatchableError:
     echo "Unable to open and read the input file."
     return 1
 
@@ -129,7 +129,7 @@ proc writeValidUtf8FileNim*(inFilename: string, outFilename: string,
   # Write the valid UTF-8 data to the output file.
   try:
     writeFile(outFilename, outData)
-  except:
+  except CatchableError:
     echo "Unable to open and write the output file."
     return 1
 
