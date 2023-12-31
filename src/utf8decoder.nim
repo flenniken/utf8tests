@@ -18,7 +18,7 @@ const
   # The accept state is 0 and the reject state is 12.
 
   # The first part of the table maps bytes to character classes that
-  # to reduce the size of the transition table and create bitmasks.
+  # reduce the size of the transition table and create bitmasks.
   utf8d = [
    0u8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
