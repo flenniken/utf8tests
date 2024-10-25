@@ -6,9 +6,7 @@ import std/options
 import std/parseopt
 import std/strformat
 import checks
-
-const
-  versionNumber = "0.1.0"
+include version
 
 type
   Args* = object
@@ -155,7 +153,7 @@ proc processArgs(args: Args): int =
   if args.help:
     echo getHelp()
   elif args.version:
-    echo versionNumber
+    echo utf8testsVersionNumber
   else:
     result = checkFile(args)
 
