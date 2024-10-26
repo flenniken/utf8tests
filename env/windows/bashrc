@@ -1,0 +1,17 @@
+
+# Show the current folder in the prompt.
+PS1='(debian)\w $ '
+
+# Allow aliases to work with sudo, i.e.: "sudo ll".
+alias sudo='sudo '
+
+# List the most recent files.
+alias l='ls -ltr | tail -10'
+
+alias ls='ls --color=auto'
+alias ll='ls -l'
+alias n='nimble'
+
+# Use the manually built version of nim.
+export PATH=/home/utf8tester/Nim/bin:$PATH
+

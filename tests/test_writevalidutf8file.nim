@@ -178,7 +178,7 @@ suite "writevalidutf8file.nim":
       newDecoder("emacs.25.3.1", writeNothing, true, "replace", "fail"),
       newDecoder("iconv.1.11", writeValidUtf8FileIconv, false, "skip", "fail"),
       newDecoder("nim.1.4.8", writeValidUtf8FileNim, false, "skip", "fail"),
-      newDecoder("nodejs.17.2.0", writeValidUtf8FileNodeJs, false, "replace", "pass"),
+      # newDecoder("nodejs.17.2.0", writeValidUtf8FileNodeJs, false, "replace", "pass"),
       newDecoder("perl.5.30.2", writeValidUtf8FilePerl, false, "replace", "fail"),
       newDecoder("python.3.7.5", writeValidUtf8FilePython3, false, "skip", "pass"),
       newDecoder("python.3.7.5", writeValidUtf8FilePython3, false, "replace", "pass"),

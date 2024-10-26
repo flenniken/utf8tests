@@ -55,5 +55,4 @@ COPY --chown=utf8tester:utf8tester bashrc .bashrc
 
 # Start in the utf8tests directory.
 WORKDIR /home/utf8tester/utf8tests
-RUN chown utf8tester:utf8tester /home/utf8tester/utf8tests
 CMD ["/bin/bash"]
