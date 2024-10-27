@@ -354,3 +354,48 @@ Or you can run the utf8tests.bin file through your decoder and post
 the resulting file to the artifacts directory.
 
 If you find a bug or something is wrong, please file an issue.
+
+# Build
+
+Requirements:
+
+* git
+* docker
+
+Download the project using git clone.
+
+~~~
+mkdir ~/code/utf8tests
+cd ~/code/utf8tests
+git clone git@github.com:flenniken/utf8tests.git
+~~~
+
+Build a docker development environment. The first run builds the image
+and the second one creates the container and runs it.
+
+~~~
+./devenv run debian
+./devenv run debian
+~~~
+
+Build the nim compiler.
+
+~~~
+cd ~/Nim
+./build_all.sh
+nim -v
+~~~
+
+Build the utf8tests project:
+
+~~~
+cd ~/utf8tests
+n b
+n test
+~~~
+
+You can delete the development container and image with the delete command:
+
+~~~
+./devenv delete debian
+~~~
