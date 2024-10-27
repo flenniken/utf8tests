@@ -3,12 +3,44 @@
 # Work with the utf8test docker build environments.  Type devenv with
 # no arguments for usage information.
 
+action=$1
+platform=$2
+
+# Make sure we're not running inside the docker container.
+if [[ ! -z "${utf8tests_env}" ]]; then
+  echo "Error: run on the host not in the docker container."
+  exit
+fi
+
+function showUsage() {
+  echo "Run, list or delete a development environment (debian or ubuntu)."
+  echo "Specify the os and the action. For example to run debian:"
+  echo ""
+  echo "./devenv run debian"
+  echo ""
+  exit
+}
+
+case $platform in
+  debian)
+    ;;
+  ubuntu)
+    ;;
+  *)
+    echo "Error: invalid platform."
+    showUsage
+    ;;
+esac
+
 project="utf8tests"
 containerHome="/home/utf8tester/utf8tests"
 
-projectImage="$project-image"
-projectContainer="$project-container"
+projectImage="$project-image-$platform"
+projectContainer="$project-container-$platform"
 rootDir=$(pwd)
+
+dockerFolder=$rootDir/env/$platform
+dockerFile=$dockerFolder/Dockerfile
 
 function runMe() {
   ## Create the docker image or run the container.
@@ -30,7 +62,9 @@ function runMe() {
 
     # Run the container.
     status=$(docker inspect $projectContainer 2>/dev/null | grep Status)
-    mapports='-p 127.0.0.1:8000:8000'
+    # mapports='-p 127.0.0.1:8000:8000'
+    mapports=''
+
     case $status in
       *running*)
         echo "The $projectContainer is running, attaching to it..."
@@ -95,45 +129,14 @@ function listMe() {
   fi
 }
 
-function showUsage() {
-  echo "Run, list or delete a development environment (debian or mac)."
-  echo "Specify the os and the action. For example to run debian:"
-  echo ""
-  echo "./devenv run debian"
-  echo ""
-  exit
-}
-
 
 # main
 
-action=$1
-platform=$2
-
-case $platform in
-  debian)
-    ;;
-  mac)
-    ;;
-  *)
-    echo "Error: invalid platform."
-    showUsage
-    ;;
-esac
-
-dockerFolder=$rootDir/env/$platform
-dockerFile=$dockerFolder/Dockerfile
 
 # Verify we are running in the root folder by looking for the Docker
 # file.
 if [ ! -s "$dockerFile" ]; then
   echo "Error: run from the root folder."
-  exit
-fi
-
-# Make sure we're not running inside the docker container.
-if [[ ! -z "${coder_env}" ]]; then
-  echo "Error: run on the host not in the docker container."
   exit
 fi
 

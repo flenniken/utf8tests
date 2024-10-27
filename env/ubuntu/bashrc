@@ -1,6 +1,6 @@
 
 # Show the current folder in the prompt.
-PS1='(debian)\w $ '
+PS1='(ubuntu)\w $ '
 
 # Allow aliases to work with sudo, i.e.: "sudo ll".
 alias sudo='sudo '
@@ -23,7 +23,6 @@ then
   echo "./build_all.sh"
   echo "cd ~/utf8tests"
 else
-  echo "Using nim version:"
   cat /etc/os-release | head -1
   nim -v | head -1
 fi

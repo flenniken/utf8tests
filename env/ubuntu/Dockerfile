@@ -1,8 +1,8 @@
 # This builds a development environment for the utf8 tests project.
 
-FROM debian:12
+FROM ubuntu:24.04
 MAINTAINER Steve Flenniken
-ENV utf8tests_env=debian
+ENV utf8tests_env=ubuntu
 
 # Install base apps.
 RUN apt update && apt -qy install less man sudo tree curl wget nano git
@@ -28,21 +28,6 @@ RUN chown utf8tester:utf8tester /home/utf8tester
 USER utf8tester
 WORKDIR /home/utf8tester
 
-# The debian package manager installs an old nim version.  To get a
-# newer version you can download prebuilt binaries or build from
-# source.  The prebuilt binaries are built for x86 machines and no
-# version for arm64. The x86 version will run using emulation, however
-# nimble is very slow.  You can build from source by cloning the git
-# repo, checking out a version tag and running a build script.  This
-# docker file supports the build from source method.
-
-# Note: You need to manually run build_all.sh once in the container to
-# build nim.
-
-# cd ~/Nim
-# build_all.sh
-# nim -v
-
 # Get nim source for manually building nim.
 RUN git clone https://github.com/nim-lang/Nim.git
 ARG nim_version=v2.2.0
@@ -55,4 +40,11 @@ COPY --chown=utf8tester:utf8tester bashrc .bashrc
 
 # Start in the utf8tests directory.
 WORKDIR /home/utf8tester/utf8tests
+
+# Doesn't change ownership, doing later in bashrc.
+# RUN sudo chown utf8tester:utf8tester /home/utf8tester/utf8tests
+
+# Touch file to prevent message from appearing.
+RUN touch ~/.sudo_as_admin_successful
+
 CMD ["/bin/bash"]
