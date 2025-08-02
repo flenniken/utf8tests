@@ -30,7 +30,7 @@
 # num:invalid hex:hexString:hexString2:hexString3
 
 # * hexString2 is the expected value when skipping invalid bytes.
-# * hexString2 is the expected value when replacing invalid bytes with U+FFFD.
+# * hexString3 is the expected value when replacing invalid bytes with U+FFFD.
 
 
 
